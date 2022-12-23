@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <script src="https://cdn.anychart.com/releases/8.7.1/js/anychart-core.min.js"></script>
+    <script src="https://cdn.anychart.com/releases/8.7.1/js/anychart-graph.min.js"></script>
+    <script src="https://cdn.anychart.com/releases/8.7.1/js/anychart-data-adapter.min.js"></script>
+    <style type="text/css">
+        #container {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+        @font-face {
+            font-family: gamef;
+            src: url(Orbitron-SemiBold.ttf);
+        }
+        @import url('https://fonts.googleapis.com/css2?family=Creepster&display=swap');
+    </style>
+</head>
+<body style="background-image: url('f5.jpg');background-position: center;background-size: cover;background-repeat: no-repeat;padding: 2rem;">
+    <button onclick="run_minimax()" style="background: #1F2335;border-radius: 2rem;width: 8rem;height: 2rem;color: #5c86ff;font-family: gamef;position: absolute;">
+        Play
+    </button>
+    <button onclick="update_graph()" style="background: #1F2335;border-radius: 2rem;width: 8rem;height: 2rem;color: #E34C26;font-family: gamef;position: absolute;margin-top: 5rem;">
+        Change graph
+    </button>
+    <script>
+        var graphs = [
+                        [[2,3],[2],[0,1],[0,4],[3]],
+                        [[2,3],[3,4],[0,4],[0,1],[1,2]],
+                        [[2,3],[2,3,4],[0,1],[0,1,4],[1,3]],
+                        [[1,4],[0,2,5,6],[1,7],[5,7,8],[0,7,9],[1,3,9],[1],[2,3,4,9],[3],[4,5,7]],
+                        [[3],[12,13,14],[8,9,10,11],[0,5,6,11,13,14],[8,9,12],[3,9,10,14],[3],[8,9],[2,4,7,9],[2,4,5,7,8,11],[2,5,13],[2,3,9,12],[1,4,11,13],[1,3,10,12,14],[1,3,5,13]],
+                        [[3],[2,6,8,9],[1,4,5,9,11],[0,4,6,7,8],[2,3,10],[2,6,9,11],[1,3,5,8,11],[3,10,11],[1,3,6],[1,2,5],[4,7,11],[2,5,6,7,10]],
+                        [[3],[2,5,6,12],[1,3,8,9,12],[0,2,4,5,8,11,13],[3,7,8,11,13],[1,3,6,8,10],[1,5,7,10],[4,6,10],[2,3,4,5],[2,12,13],[5,6,7,11],[3,4,10,13],[1,2,9],[3,4,9,11]],
+                        [[3],[2,5,6],[1,4,7,8],[0,4,5,6],[2,3,8],[1,3,6],[1,3,5,7,8],[2,6,8],[2,4,6,7]],
+                        [[6],[4],[9],[5],[1,5],[3,4,6],[0,5,10],[8,9,10],[7],[2,7],[6,7]],
+                        [[2,9,14],[2,5,7],[0,1,3,8,9,11,14],[2,12],[5,11,18],[1,4,18],[9,17,19],[1,11,12,13,14,17,19],[2,16,17],[0,2,6,12,14,18],[14],[2,4,7],[3,7,9,13],[7,12,14],[0,2,7,9,10,13,17],[18],[8,19],[6,7,8,14,19],[4,5,9,15],[6,7,16,17]],
+                        [[3,4,6,7,9,15,16,18],[4,5,8,19],[3,4,6,9,17,18],[0,2,11,15],[0,1,10,6,2,12,14,16],[1,10,7,9,15,17,18],[0,10,4,7,9,2,11,12,13,14,15,17,19],[0,10,5,6,9,16,17],[1,9,14,15,16,19],[0,10,5,6,7,8,2,11,13,15,16,17,18],[4,5,6,7,9,18],[3,6,9,12,19],[4,6,11,15,17,19],[6,9,15,17,18,19],[4,6,8,15,19],[0,3,5,6,8,9,12,13,14,16,19],[0,4,7,8,9,15,17,18,19],[5,6,7,9,2,12,13,16],[0,10,5,9,2,13,16],[1,6,8,11,12,13,14,15,16]],
+                        [[1,4,5,7,9,16,27,29,30,36,39,43,45],[0,2,4,11,12,13,18,29,31,45],[1,6,8,13,15,18,20,21,24,27,30,32,40,44],[4,5,9,13,19,24,30,37,38,39,41,46],[0,1,3,14,27,28,30,33,44,47],[0,3,7,9,19,21,27,29,30,32,33,35],[2,7,12,13,17,22,23,26,41,45],[0,5,6,17,20,22,24,28,29,36],[2,9,11,12,14,15,18,26,27,36,47,49],[0,3,5,8,10,11,13,22,25,27,33,36,39,40],[9,28,38,44,46,48],[1,8,9,12,15,20,22,25,33,38,46,47],[1,6,8,11,21,22,23,27,32,44,46,48],[1,2,3,6,9,21,28,37,48],[4,8,17,19,23,36,37,43,44,49],[2,8,11,24,26,33,37,43,46,47],[0,20,27,32,36,41,47,48],[6,7,14,20,25,27,38],[1,2,8,19,31,33,34,38],[3,5,14,18,27,28,33,38,47,48],[2,7,11,16,17,26,30,41,42,43],[2,5,12,13,31,34,37,46],[6,7,9,11,12,24,25,28,29,30,36,43,49],[6,12,14,25,28,30,31,33,35,38,44,49],[2,3,7,15,22,25,29,31,32,41,43,45],[9,11,17,22,23,24,31,32,35,38],[6,8,15,20,30,36,43,45,48],[0,2,4,5,8,9,12,16,17,19,30,35,36,47,49],[4,7,10,13,19,22,23,33,43,44,45,49],[0,1,5,7,22,24,37,41,45],[0,2,3,4,5,20,22,23,26,27,32,33,39,42,46,48],[1,18,21,23,24,25,33,35,41,42,44],[2,5,12,16,24,25,30,34,46],[4,5,9,11,15,18,19,23,28,30,31],[18,21,32,35,36,37,41,47,49],[5,23,25,27,31,34,41,44],[0,7,8,9,14,16,22,26,27,34,42,46],[3,13,14,15,21,29,34,42,44,46,48],[3,10,11,17,18,19,23,25,39],[0,3,9,30,38,46],[2,9,41,42,48],[3,6,16,20,24,29,31,34,35,40,44],[20,30,31,36,37,40,43],[0,14,15,20,22,24,26,28,42],[2,4,10,12,14,23,28,31,35,37,41],[0,1,6,24,26,28,29,48],[3,10,11,12,15,21,30,32,36,37,39,48],[4,8,11,15,16,19,27,34],[10,12,13,16,19,26,30,37,40,45,46],[8,14,22,23,27,28,34]]
+                    ]
+        var scroll_content = `<p style="font-family: gamef;color: white;font-size:small;background:#2E66C7;box-shadow: 1px 2px 2px 1px #fff9f4">BFS Search is displayed here</p>`
+        var position_of_cat = 2
+        var position_of_mouse = 1 
+        var graph_config = [[1,4,5,7,9,16,27,29,30,36,39,43,45],[0,2,4,11,12,13,18,29,31,45],[1,6,8,13,15,18,20,21,24,27,30,32,40,44],[4,5,9,13,19,24,30,37,38,39,41,46],[0,1,3,14,27,28,30,33,44,47],[0,3,7,9,19,21,27,29,30,32,33,35],[2,7,12,13,17,22,23,26,41,45],[0,5,6,17,20,22,24,28,29,36],[2,9,11,12,14,15,18,26,27,36,47,49],[0,3,5,8,10,11,13,22,25,27,33,36,39,40],[9,28,38,44,46,48],[1,8,9,12,15,20,22,25,33,38,46,47],[1,6,8,11,21,22,23,27,32,44,46,48],[1,2,3,6,9,21,28,37,48],[4,8,17,19,23,36,37,43,44,49],[2,8,11,24,26,33,37,43,46,47],[0,20,27,32,36,41,47,48],[6,7,14,20,25,27,38],[1,2,8,19,31,33,34,38],[3,5,14,18,27,28,33,38,47,48],[2,7,11,16,17,26,30,41,42,43],[2,5,12,13,31,34,37,46],[6,7,9,11,12,24,25,28,29,30,36,43,49],[6,12,14,25,28,30,31,33,35,38,44,49],[2,3,7,15,22,25,29,31,32,41,43,45],[9,11,17,22,23,24,31,32,35,38],[6,8,15,20,30,36,43,45,48],[0,2,4,5,8,9,12,16,17,19,30,35,36,47,49],[4,7,10,13,19,22,23,33,43,44,45,49],[0,1,5,7,22,24,37,41,45],[0,2,3,4,5,20,22,23,26,27,32,33,39,42,46,48],[1,18,21,23,24,25,33,35,41,42,44],[2,5,12,16,24,25,30,34,46],[4,5,9,11,15,18,19,23,28,30,31],[18,21,32,35,36,37,41,47,49],[5,23,25,27,31,34,41,44],[0,7,8,9,14,16,22,26,27,34,42,46],[3,13,14,15,21,29,34,42,44,46,48],[3,10,11,17,18,19,23,25,39],[0,3,9,30,38,46],[2,9,41,42,48],[3,6,16,20,24,29,31,34,35,40,44],[20,30,31,36,37,40,43],[0,14,15,20,22,24,26,28,42],[2,4,10,12,14,23,28,31,35,37,41],[0,1,6,24,26,28,29,48],[3,10,11,12,15,21,30,32,36,37,39,48],[4,8,11,15,16,19,27,34],[10,12,13,16,19,26,30,37,40,45,46],[8,14,22,23,27,28,34]]
+        var stack_trace_bag = []
+        function get_snapshot(param1, param2) {
+            return param1.toString()+","+param2.toString()
+        }
+        function explore_nodes(param1, param2, param3, param4) {
+            var exploration = []
+            if(param3 == "escape"){
+                for(let cat_pos=0;cat_pos<param4[param2].length;cat_pos++){
+                    if(param4[param2][cat_pos] > 0){
+                        var snapshot_to_percolate = get_snapshot(param1, param4[param2][cat_pos])
+                        var snapshot_to_percolate_for_mouse = get_snapshot(snapshot_to_percolate, "catch")
+                        exploration.push(snapshot_to_percolate_for_mouse)
+                    }
+                }
+
+            } else{
+                for(let mouse_pos=0;mouse_pos<param4[param1].length;mouse_pos++){
+                    var snapshot_to_percolate = get_snapshot(param4[param1][mouse_pos], param2)
+                    var snapshot_to_percolate_for_cat = get_snapshot(snapshot_to_percolate, "escape")
+                    exploration.push(snapshot_to_percolate_for_cat)
+                }
+            }
+            return exploration
+
+        }
+        function decode_snapshot(param) {
+            var state = param.split(",")
+            var jerry_pos = parseInt(state[0])
+            var tom_pos = parseInt(state[1])
+            var action = state[2]
+            var player_won = state[3]
+            return {jerry_pos, tom_pos, action, player_won}
+        }
+        function decode_snapshot_for_player(param) {
+            var state = param.split(",")
+            var jerry_pos = parseInt(state[0])
+            var tom_pos = parseInt(state[1])
+            var action = state[2]
+            return {
+                'jerry_nxt_pos': jerry_pos,
+                'tom_nxt_pos': tom_pos,
+                'action_nxt' : action
+            };
+            // return {jerry_pos, tom_pos, action}
+        }
+        function cat_horizon(param) {
+            var span = param.length
+            for(let node=0;node<param.length;node++){
+                if(param[node] == 0){
+                    span = span-1
+                }
+            }
+            return span
+        }
+        function minimax(graph_config) {
+            while(stack_trace_bag.length > 0){
+                _ = stack_trace_bag.pop()
+            }
+            var percolated_state_space = {"catch":{}, "escape":{}}
+            var n = graph_config.length
+            var search_trace = []
+            var mpos = 0;
+            var cpos = 1;
+            
+            var player_nexus = {"catch":{}, "escape":{}}
+            
+            for(let pos_mouse=0;pos_mouse<n;pos_mouse++){
+                for(let pos_cat=0;pos_cat<n;pos_cat++){
+                    var snapshot = get_snapshot(pos_mouse, pos_cat)
+                    // Tom can go everywhere except to the goal node
+                    player_nexus["catch"][snapshot] = cat_horizon(graph_config[pos_cat]) 
+                    player_nexus["escape"][snapshot] = graph_config[pos_mouse].length                    
+                }
+            }
+            // console.log('Player Nexus',player_nexus)
+
+            var invariant_snapshot = get_snapshot(0, 0)
+            var invariant_snapshot_ps = get_snapshot(invariant_snapshot, "escape")
+            var invariant_snapshot_st = get_snapshot(invariant_snapshot_ps, "mouse wins")
+            percolated_state_space["escape"][invariant_snapshot] = "mouse wins"
+            search_trace.push(invariant_snapshot_st)    
+            stack_trace_bag.push(invariant_snapshot_st)            
+
+            invariant_snapshot = get_snapshot(0, 0)
+            invariant_snapshot_ps = get_snapshot(invariant_snapshot, "catch")
+            invariant_snapshot_st = get_snapshot(invariant_snapshot_ps, "mouse wins")
+            percolated_state_space["catch"][invariant_snapshot] = "mouse wins"
+            search_trace.push(invariant_snapshot_st) 
+            stack_trace_bag.push(invariant_snapshot_st)            
+
+           
+            for(let node_id=1;node_id<n;node_id++){
+                
+                var invariant_snapshot = get_snapshot(0, node_id)
+                var invariant_snapshot_ps = get_snapshot(invariant_snapshot, "escape")
+                var invariant_snapshot_st = get_snapshot(invariant_snapshot_ps, "mouse wins")
+                percolated_state_space["escape"][invariant_snapshot] = "mouse wins"
+                search_trace.push(invariant_snapshot_st)                
+                stack_trace_bag.push(invariant_snapshot_st)            
+
+                invariant_snapshot = get_snapshot(node_id, node_id)
+                invariant_snapshot_ps = get_snapshot(invariant_snapshot, "escape")
+                invariant_snapshot_st = get_snapshot(invariant_snapshot_ps, "cat wins")
+                percolated_state_space["escape"][invariant_snapshot] = "cat wins"
+                search_trace.push(invariant_snapshot_st)
+                stack_trace_bag.push(invariant_snapshot_st)            
+
+                invariant_snapshot = get_snapshot(0, node_id)
+                invariant_snapshot_ps = get_snapshot(invariant_snapshot, "catch")
+                invariant_snapshot_st = get_snapshot(invariant_snapshot_ps, "mouse wins")
+                percolated_state_space["catch"][invariant_snapshot] = "mouse wins"
+                search_trace.push(invariant_snapshot_st)                
+                stack_trace_bag.push(invariant_snapshot_st)            
+                
+
+                invariant_snapshot = get_snapshot(node_id, node_id)
+                invariant_snapshot_ps = get_snapshot(invariant_snapshot, "catch")
+                invariant_snapshot_st = get_snapshot(invariant_snapshot_ps, "cat wins")
+                percolated_state_space["catch"][invariant_snapshot] = "cat wins"
+                search_trace.push(invariant_snapshot_st)
+                stack_trace_bag.push(invariant_snapshot_st)            
+
+            }
+            
+            // var temp = `<p style="font-family: gamef;background: #E34C26;color:white;font-size:small;box-shadow: 1px 2px 2px 1px #fff9f4;">mouse:&nbsp;`+ search_trace[0].split(",")[0] + `, &nbsp;cat:&nbsp;` + search_trace[0].split(",")[1] + `&nbsp;action:&nbsp;` + search_trace[0].split(",")[2] + `&nbsp;` + search_trace[0].split(',')[3]  + `</p>` 
+            //     var temp = `<p style="font-family: gamef;color:white;font-size:small;box-shadow: 1px 2px 2px 1px #fff9f4;">mouse:&nbsp;`+ search_trace[i].split(",")[0] + `, &nbsp;cat:&nbsp;` + search_trace[i].split(",")[1] + `&nbsp;action:&nbsp;` + search_trace[i].split(",")[2] + `&nbsp;` + search_trace[i].split(',')[3]  + `</p>` 
+            
+            // scroll_content = temp     
+            // position_of_cat = parseInt(search_trace[0].split(",")[1])
+            // position_of_mouse = parseInt(search_trace[0].split(",")[0])       
+            // for(let i=1;i<search_trace.length;i++){
+            //     iter = 0
+            //     while(iter < 10000000){
+            //         iter += 1
+            //     }
+            //     var temp = `<p style="font-family: gamef;color:white;font-size:small;box-shadow: 1px 2px 2px 1px #fff9f4;">mouse:&nbsp;`+ search_trace[i].split(",")[0] + `, &nbsp;cat:&nbsp;` + search_trace[i].split(",")[1] + `&nbsp;action:&nbsp;` + search_trace[i].split(",")[2] + `&nbsp;` + search_trace[i].split(',')[3]  + `</p>` 
+            //     scroll_content += temp
+            //     position_of_cat = parseInt(search_trace[i].split(",")[1])
+            //     position_of_mouse = parseInt(search_trace[i].split(",")[0])  
+            // }
+           
+            // console.log("color:",percolated_state_space)
+            // console.log("queue:",search_trace)
+            while(search_trace.length > 0){
+                var snapshot = search_trace[0]
+                search_trace.splice(0,1)
+                // search_trace.pop()
+
+                let {jerry_pos, tom_pos, action, player_won} = decode_snapshot(snapshot)
+                // console.log(search_trace,snapshot)
+                var exploration = explore_nodes(jerry_pos, tom_pos, action, graph_config)
+                // console.log('exploration:',exploration)
+                for(let i=0;i<exploration.length;i++){
+                    // console.log(exploration[i])
+                    // console.log(decode_snapshot_for_player(exploration[i]))
+                    var nxt = decode_snapshot_for_player(exploration[i])
+                    jerry_nxt_pos = nxt["jerry_nxt_pos"]
+                    tom_nxt_pos = nxt["tom_nxt_pos"]
+                    action_nxt = nxt["action_nxt"]
+                    // console.log(jerry_nxt_pos, tom_nxt_pos, action_nxt) 
+                    var update_snapshot = get_snapshot(jerry_nxt_pos, tom_nxt_pos)
+                    var update_snapshot_ps = get_snapshot(update_snapshot, action_nxt)
+                    
+                    if(!(update_snapshot in percolated_state_space[action_nxt])){
+                        if(player_won == "cat wins" && action_nxt=="catch"){
+                            percolated_state_space[action_nxt][update_snapshot] = player_won 
+                            var update_snapshot_st = get_snapshot(update_snapshot_ps, player_won)
+                            search_trace.push(update_snapshot_st)
+                            stack_trace_bag.push(update_snapshot_st)            
+
+                        }
+                        else if(player_won == "mouse wins" && action_nxt=="escape"){
+                                percolated_state_space[action_nxt][update_snapshot] = player_won 
+                                var update_snapshot_st = get_snapshot(update_snapshot_ps, player_won)
+                                search_trace.push(update_snapshot_st)
+                                stack_trace_bag.push(update_snapshot_st)            
+                        }
+                        else{
+
+                            player_nexus[action_nxt][update_snapshot] -= 1
+                            if(player_nexus[action_nxt][update_snapshot] == 0){
+                                if(action_nxt == "catch"){
+                                    percolated_state_space[action_nxt][update_snapshot] = "mouse wins" 
+                                    var update_snapshot_st = get_snapshot(update_snapshot_ps, "mouse wins")
+                                    search_trace.push(update_snapshot_st)
+                                    stack_trace_bag.push(update_snapshot_st)            
+
+                                } else{
+                                    percolated_state_space[action_nxt][update_snapshot] = "cat wins"
+                                    var update_snapshot_st = get_snapshot(update_snapshot_ps, "cat wins")
+                                    search_trace.push(update_snapshot_st)
+                                    stack_trace_bag.push(update_snapshot_st)            
+                                    }
+                                
+                            }
+                            
+                        }    
+                    } 
+                     
+                }
+            }
+            // console.log(percolated_state_space)
+            if("1,2" in percolated_state_space["escape"]){
+                return percolated_state_space["escape"]["1,2"]
+            } else{
+                return "Game Draw"
+            }
+         }
+    </script>
+    <div class="editor-block" style="position:absolute;margin-left:60rem;margin-top:25rem;display: block;width: 500px;height: 400px;background: linear-gradient(109.61deg, #4C4F5A 4.26%, #202125 84.84%);border-radius: 10px;background: #C5C8D4;">
+    <div style="height: 2rem;display: flex;width: 100%;padding: 0.2rem 1rem 0.2rem 1rem;">
+        <!-- <div style="flex: 1;">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin: 2px;"><path d="M14.9999 6.675L13.1999 6.075C12.9999 5.975 12.8999 5.775 12.9999 5.675L13.8999 3.975C14.4999 2.775 13.1999 1.475 11.9999 2.075L10.2999 2.975C10.1999 3.075 9.9999 2.975 9.8999 2.775L9.2999 0.975C8.8999 -0.325 7.0999 -0.325 6.6999 0.975L6.0999 2.775C5.9999 2.975 5.7999 3.075 5.6999 2.975L3.9999 2.075C2.7999 1.475 1.4999 2.775 2.0999 3.975L2.9999 5.675C3.0999 5.775 2.9999 5.975 2.7999 6.075L0.999902 6.675C-0.300098 7.075 -0.300098 8.975 0.999902 9.375L2.7999 9.975C2.9999 9.975 3.0999 10.175 2.9999 10.275L2.0999 11.975C1.4999 13.175 2.7999 14.475 3.9999 13.875L5.6999 12.975C5.8999 12.875 6.0999 12.975 6.0999 13.175L6.6999 14.975C7.0999 16.275 8.9999 16.275 9.3999 14.975L9.9999 13.175C10.0999 12.975 10.2999 12.875 10.3999 12.975L12.0999 13.875C13.2999 14.475 14.5999 13.175 13.9999 11.975L12.9999 10.275C12.8999 10.075 12.9999 9.875 13.1999 9.875L14.9999 9.275C16.2999 8.875 16.2999 7.075 14.9999 6.675ZM7.9999 10.375C6.6999 10.375 5.5999 9.275 5.5999 7.975C5.5999 6.675 6.6999 5.575 7.9999 5.575C9.2999 5.575 10.3999 6.675 10.3999 7.975C10.3999 9.275 9.2999 10.375 7.9999 10.375Z" fill="#fff"/></svg>
+        </div> -->
+        <div style="flex:5;">
+            <h1 style="  font-family: Lato, sans-serif;
+            font-weight: 900;
+            font-size: 14px;
+            letter-spacing: 1.57px;
+            color: #000;
+            margin: 0;">Corresponding Alogrithm Snippets</h1>
+        </div>
+        <div style="flex: 1;align-items: flex-end;">
+            <svg width="16" height="8" viewBox="0 0 16 8" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-left:1rem"><path d="M8.7089 7.65105L14.8704 2.02908C15.1112 1.80937 15.2528 1.51212 15.2528 1.18902C15.2528 0.865913 15.1112 0.56866 14.8704 0.348951C14.6296 0.129241 14.3038 0 13.9497 0C13.5956 0 13.2698 0.129241 13.029 0.348951L7.75989 5.1567L2.49077 0.348951C2.24998 0.129241 1.9242 0 1.57009 0C1.21598 0 0.890202 0.129241 0.649409 0.336026C0.380287 0.568659 0.252808 0.878837 0.252808 1.18902C0.252808 1.48627 0.380286 1.78352 0.621079 2.02908C2.23581 3.51535 6.42844 7.3538 6.71173 7.6252L6.74006 7.65105C7.24998 8.11632 8.19898 8.11632 8.7089 7.65105Z" fill="#4C4F5A"></path></svg>
+        </div>
+      
+    </div>
+    <div>
+        
+    </div>
+    </div>
+    <img src="tj.jpg" alt="" style="position: absolute;margin-left: 10rem;margin-right: auto;border-radius: 2rem;z-index: 2;margin-top: -1rem;width: 20rem;height: 12rem;">
+    <!-- <button style=""></button> -->
+    <div style="display: flex;flex-direction: row;height: 40rem;width: 65%;align-items: stretch;margin-top: 8.5rem;border-radius: 2rem;">
+        <div id="container" style="flex:3;border-radius: 2rem;"><div style="position: relative; left: 0px; top: 0px; overflow: hidden; width: 100%; height: 100%;"><svg xmlns="http://www.w3.org/2000/svg" border="0" data-ac-wrapper-id="11" width="100%" height="100%" class="anychart-ui-support" ac-id="ac_stage_0" role="presentation" style="display: block;"><defs><pattern data-ac-wrapper-id="31" x="127.42595898899395" y="53.66888750488917" width="48" height="48" patternUnits="userSpaceOnUse" id="ac_fill-pattern_d"><image data-ac-wrapper-id="32" x="0" y="0" width="48" height="48" image-rendering="optimizeQuality" preserveAspectRatio="none meet" opacity="1" xlink:href="https://kowndinya2000.github.io/cs512.github.io/goal.png" id="ac_image_e"></image></pattern><pattern data-ac-wrapper-id="34" x="199.7644785212023" y="91.36887407682343" width="48" height="48" patternUnits="userSpaceOnUse" id="ac_fill-pattern_g"><image data-ac-wrapper-id="35" x="0" y="0" width="48" height="48" image-rendering="optimizeQuality" preserveAspectRatio="none meet" opacity="1" xlink:href="https://kowndinya2000.github.io/cs512.github.io/jerry.png" id="ac_image_h"></image></pattern><pattern data-ac-wrapper-id="37" x="144.25703742898577" y="116.94314949668436" width="48" height="48" patternUnits="userSpaceOnUse" id="ac_fill-pattern_j"><image data-ac-wrapper-id="38" x="0" y="0" width="48" height="48" image-rendering="optimizeQuality" preserveAspectRatio="none meet" opacity="1" xlink:href="https://kowndinya2000.github.io/cs512.github.io/tom.png" id="ac_image_k"></image></pattern><pattern data-ac-wrapper-id="40" x="214.292762987944" y="110.4157204867291" width="48" height="48" patternUnits="userSpaceOnUse" id="ac_fill-pattern_m"><image data-ac-wrapper-id="41" x="0" y="0" width="48" height="48" image-rendering="optimizeQuality" preserveAspectRatio="none meet" opacity="1" xlink:href="https://kowndinya2000.github.io/cs512.github.io/node_g.png" id="ac_image_n"></image></pattern><pattern data-ac-wrapper-id="43" x="175.65461373563286" y="181.65576933852734" width="48" height="48" patternUnits="userSpaceOnUse" id="ac_fill-pattern_p"><image data-ac-wrapper-id="44" x="0" y="0" width="48" height="48" image-rendering="optimizeQuality" preserveAspectRatio="none meet" opacity="1" xlink:href="https://kowndinya2000.github.io/cs512.github.io/node_g.png" id="ac_image_q"></image></pattern><pattern data-ac-wrapper-id="46" x="139.8712476865545" y="89.67644286949754" width="48" height="47.999999999999986" patternUnits="userSpaceOnUse" id="ac_fill-pattern_s"><image data-ac-wrapper-id="47" x="0" y="0" width="48" height="47.999999999999986" image-rendering="optimizeQuality" preserveAspectRatio="none meet" opacity="1" xlink:href="https://kowndinya2000.github.io/cs512.github.io/node_g.png" id="ac_image_t"></image></pattern><pattern data-ac-wrapper-id="49" x="67.34417402278318" y="73.73768478287225" width="48" height="48" patternUnits="userSpaceOnUse" id="ac_fill-pattern_v"><image data-ac-wrapper-id="50" x="0" y="0" width="48" height="48" image-rendering="optimizeQuality" preserveAspectRatio="none meet" opacity="1" xlink:href="https://kowndinya2000.github.io/cs512.github.io/node_g.png" id="ac_image_w"></image></pattern><pattern data-ac-wrapper-id="52" x="13.787513342696585" y="29.48766880396068" width="48" height="47.99999999999999" patternUnits="userSpaceOnUse" id="ac_fill-pattern_y"><image data-ac-wrapper-id="53" x="0" y="0" width="48" height="47.99999999999999" image-rendering="optimizeQuality" preserveAspectRatio="none meet" opacity="1" xlink:href="https://kowndinya2000.github.io/cs512.github.io/node_g.png" id="ac_image_z"></image></pattern><pattern data-ac-wrapper-id="55" x="84.86339749034974" y="220.54645277583174" width="48" height="48.00000000000003" patternUnits="userSpaceOnUse" id="ac_fill-pattern_11"><image data-ac-wrapper-id="56" x="0" y="0" width="48" height="48.00000000000003" image-rendering="optimizeQuality" preserveAspectRatio="none meet" opacity="1" xlink:href="https://kowndinya2000.github.io/cs512.github.io/node_g.png" id="ac_image_12"></image></pattern><pattern data-ac-wrapper-id="58" x="157.83975038423085" y="134.5424439369134" width="48" height="48" patternUnits="userSpaceOnUse" id="ac_fill-pattern_14"><image data-ac-wrapper-id="59" x="0" y="0" width="48" height="48" image-rendering="optimizeQuality" preserveAspectRatio="none meet" opacity="1" xlink:href="https://kowndinya2000.github.io/cs512.github.io/node_g.png" id="ac_image_15"></image></pattern><pattern data-ac-wrapper-id="61" x="252.96274790075915" y="195.9716262889177" width="48" height="48" patternUnits="userSpaceOnUse" id="ac_fill-pattern_17"><image data-ac-wrapper-id="62" x="0" y="0" width="48" height="48" image-rendering="optimizeQuality" preserveAspectRatio="none meet" opacity="1" xlink:href="https://kowndinya2000.github.io/cs512.github.io/node_g.png" id="ac_image_18"></image></pattern><pattern data-ac-wrapper-id="64" x="96.22258467101005" y="189.9712594547679" width="48" height="48" patternUnits="userSpaceOnUse" id="ac_fill-pattern_1a"><image data-ac-wrapper-id="65" x="0" y="0" width="48" height="48" image-rendering="optimizeQuality" preserveAspectRatio="none meet" opacity="1" xlink:href="https://kowndinya2000.github.io/cs512.github.io/node_g.png" id="ac_image_1b"></image></pattern><pattern data-ac-wrapper-id="67" x="143.03591812658817" y="159.07938627089044" width="48" height="48" patternUnits="userSpaceOnUse" id="ac_fill-pattern_1d"><image data-ac-wrapper-id="68" x="0" y="0" width="48" height="48" image-rendering="optimizeQuality" preserveAspectRatio="none meet" opacity="1" xlink:href="https://kowndinya2000.github.io/cs512.github.io/node_g.png" id="ac_image_1e"></image></pattern><pattern data-ac-wrapper-id="70" x="229.2341231894336" y="51.85090864204858" width="48" height="48" patternUnits="userSpaceOnUse" id="ac_fill-pattern_1g"><image data-ac-wrapper-id="71" x="0" y="0" width="48" height="48" image-rendering="optimizeQuality" preserveAspectRatio="none meet" opacity="1" xlink:href="https://kowndinya2000.github.io/cs512.github.io/node_g.png" id="ac_image_1h"></image></pattern><pattern data-ac-wrapper-id="73" x="54.726858075581745" y="227.76131129766526" width="48" height="48" patternUnits="userSpaceOnUse" id="ac_fill-pattern_1j"><image data-ac-wrapper-id="74" x="0" y="0" width="48" height="48" image-rendering="optimizeQuality" preserveAspectRatio="none meet" opacity="1" xlink:href="https://kowndinya2000.github.io/cs512.github.io/node_g.png" id="ac_image_1k"></image></pattern><pattern data-ac-wrapper-id="76" x="64.12178364397921" y="158.76774482100478" width="48" height="48" patternUnits="userSpaceOnUse" id="ac_fill-pattern_1m"><image data-ac-wrapper-id="77" x="0" y="0" width="48" height="48" image-rendering="optimizeQuality" preserveAspectRatio="none meet" opacity="1" xlink:href="https://kowndinya2000.github.io/cs512.github.io/node_g.png" id="ac_image_1n"></image></pattern><pattern data-ac-wrapper-id="79" x="30.543607284530992" y="99.39276327610273" width="48" height="48" patternUnits="userSpaceOnUse" id="ac_fill-pattern_1p"><image data-ac-wrapper-id="80" x="0" y="0" width="48" height="48" image-rendering="optimizeQuality" preserveAspectRatio="none meet" opacity="1" xlink:href="https://kowndinya2000.github.io/cs512.github.io/node_g.png" id="ac_image_1q"></image></pattern><pattern data-ac-wrapper-id="82" x="-24" y="162.06301611190756" width="48" height="48" patternUnits="userSpaceOnUse" id="ac_fill-pattern_1s"><image data-ac-wrapper-id="83" x="0" y="0" width="48" height="48" image-rendering="optimizeQuality" preserveAspectRatio="none meet" opacity="1" xlink:href="https://kowndinya2000.github.io/cs512.github.io/node_g.png" id="ac_image_1t"></image></pattern><pattern data-ac-wrapper-id="85" x="195.65112208265023" y="245.11829706118982" width="48" height="48" patternUnits="userSpaceOnUse" id="ac_fill-pattern_1v"><image data-ac-wrapper-id="86" x="0" y="0" width="48" height="48" image-rendering="optimizeQuality" preserveAspectRatio="none meet" opacity="1" xlink:href="https://kowndinya2000.github.io/cs512.github.io/node_g.png" id="ac_image_1w"></image></pattern><pattern data-ac-wrapper-id="88" x="185.75590257845715" y="214.73640717388446" width="48" height="48" patternUnits="userSpaceOnUse" id="ac_fill-pattern_1y"><image data-ac-wrapper-id="89" x="0" y="0" width="48" height="48" image-rendering="optimizeQuality" preserveAspectRatio="none meet" opacity="1" xlink:href="https://kowndinya2000.github.io/cs512.github.io/node_g.png" id="ac_image_1z"></image></pattern><pattern data-ac-wrapper-id="91" x="-7.176798165041674" y="66.71436307743387" width="48" height="48" patternUnits="userSpaceOnUse" id="ac_fill-pattern_21"><image data-ac-wrapper-id="92" x="0" y="0" width="48" height="48" image-rendering="optimizeQuality" preserveAspectRatio="none meet" opacity="1" xlink:href="https://kowndinya2000.github.io/cs512.github.io/node_g.png" id="ac_image_22"></image></pattern><pattern data-ac-wrapper-id="94" x="234.13312022491" y="139.51254290254394" width="48" height="48" patternUnits="userSpaceOnUse" id="ac_fill-pattern_24"><image data-ac-wrapper-id="95" x="0" y="0" width="48" height="48" image-rendering="optimizeQuality" preserveAspectRatio="none meet" opacity="1" xlink:href="https://kowndinya2000.github.io/cs512.github.io/node_g.png" id="ac_image_25"></image></pattern><pattern data-ac-wrapper-id="97" x="31.77828933153239" y="119.45553311789533" width="48" height="48" patternUnits="userSpaceOnUse" id="ac_fill-pattern_27"><image data-ac-wrapper-id="98" x="0" y="0" width="48" height="48" image-rendering="optimizeQuality" preserveAspectRatio="none meet" opacity="1" xlink:href="https://kowndinya2000.github.io/cs512.github.io/node_g.png" id="ac_image_28"></image></pattern><pattern data-ac-wrapper-id="100" x="57.50693216661719" y="201.25816093621992" width="48" height="48" patternUnits="userSpaceOnUse" id="ac_fill-pattern_2a"><image data-ac-wrapper-id="101" x="0" y="0" width="48" height="48" image-rendering="optimizeQuality" preserveAspectRatio="none meet" opacity="1" xlink:href="https://kowndinya2000.github.io/cs512.github.io/node_g.png" id="ac_image_2b"></image></pattern><pattern data-ac-wrapper-id="103" x="60.97799505357513" y="50.036671997015475" width="48" height="48" patternUnits="userSpaceOnUse" id="ac_fill-pattern_2d"><image data-ac-wrapper-id="104" x="0" y="0" width="48" height="48" image-rendering="optimizeQuality" preserveAspectRatio="none meet" opacity="1" xlink:href="https://kowndinya2000.github.io/cs512.github.io/node_g.png" id="ac_image_2e"></image></pattern><pattern data-ac-wrapper-id="106" x="17.867734471857716" y="186.2515457138605" width="48" height="48" patternUnits="userSpaceOnUse" id="ac_fill-pattern_2g"><image data-ac-wrapper-id="107" x="0" y="0" width="48" height="48" image-rendering="optimizeQuality" preserveAspectRatio="none meet" opacity="1" xlink:href="https://kowndinya2000.github.io/cs512.github.io/node_g.png" id="ac_image_2h"></image></pattern><pattern data-ac-wrapper-id="109" x="38.9349595697675" y="57.41770945108138" width="48" height="48" patternUnits="userSpaceOnUse" id="ac_fill-pattern_2j"><image data-ac-wrapper-id="110" x="0" y="0" width="48" height="48" image-rendering="optimizeQuality" preserveAspectRatio="none meet" opacity="1" xlink:href="https://kowndinya2000.github.io/cs512.github.io/node_g.png" id="ac_image_2k"></image></pattern><pattern data-ac-wrapper-id="112" x="84.16424620055886" y="171.33654147133404" width="48" height="48" patternUnits="userSpaceOnUse" id="ac_fill-pattern_2m"><image data-ac-wrapper-id="113" x="0" y="0" width="48" height="48" image-rendering="optimizeQuality" preserveAspectRatio="none meet" opacity="1" xlink:href="https://kowndinya2000.github.io/cs512.github.io/node_g.png" id="ac_image_2n"></image></pattern><pattern data-ac-wrapper-id="115" x="118.6496300777427" y="152.36168875486928" width="48" height="48" patternUnits="userSpaceOnUse" id="ac_fill-pattern_2p"><image data-ac-wrapper-id="116" x="0" y="0" width="48" height="48" image-rendering="optimizeQuality" preserveAspectRatio="none meet" opacity="1" xlink:href="https://kowndinya2000.github.io/cs512.github.io/node_g.png" id="ac_image_2q"></image></pattern><pattern data-ac-wrapper-id="118" x="97.18305906984631" y="-11.843268779557903" width="48" height="48" patternUnits="userSpaceOnUse" id="ac_fill-pattern_2s"><image data-ac-wrapper-id="119" x="0" y="0" width="48" height="48" image-rendering="optimizeQuality" preserveAspectRatio="none meet" opacity="1" xlink:href="https://kowndinya2000.github.io/cs512.github.io/node_g.png" id="ac_image_2t"></image></pattern><pattern data-ac-wrapper-id="121" x="115.51186163802038" y="99.21922243397161" width="48" height="47.999999999999986" patternUnits="userSpaceOnUse" id="ac_fill-pattern_2v"><image data-ac-wrapper-id="122" x="0" y="0" width="48" height="47.999999999999986" image-rendering="optimizeQuality" preserveAspectRatio="none meet" opacity="1" xlink:href="https://kowndinya2000.github.io/cs512.github.io/node_g.png" id="ac_image_2w"></image></pattern><pattern data-ac-wrapper-id="124" x="108.05560190874976" y="139.6190920297264" width="48" height="48" patternUnits="userSpaceOnUse" id="ac_fill-pattern_2y"><image data-ac-wrapper-id="125" x="0" y="0" width="48" height="48" image-rendering="optimizeQuality" preserveAspectRatio="none meet" opacity="1" xlink:href="https://kowndinya2000.github.io/cs512.github.io/node_g.png" id="ac_image_2z"></image></pattern><pattern data-ac-wrapper-id="127" x="79.50775700840443" y="110.46894795157456" width="48" height="48" patternUnits="userSpaceOnUse" id="ac_fill-pattern_31"><image data-ac-wrapper-id="128" x="0" y="0" width="48" height="48" image-rendering="optimizeQuality" preserveAspectRatio="none meet" opacity="1" xlink:href="https://kowndinya2000.github.io/cs512.github.io/node_g.png" id="ac_image_32"></image></pattern><pattern data-ac-wrapper-id="130" x="147.07203958500497" y="218.48790334911754" width="48" height="48.00000000000003" patternUnits="userSpaceOnUse" id="ac_fill-pattern_34"><image data-ac-wrapper-id="131" x="0" y="0" width="48" height="48.00000000000003" image-rendering="optimizeQuality" preserveAspectRatio="none meet" opacity="1" xlink:href="https://kowndinya2000.github.io/cs512.github.io/node_g.png" id="ac_image_35"></image></pattern><pattern data-ac-wrapper-id="133" x="115.0410968576503" y="209.08314651507206" width="48" height="47.99999999999997" patternUnits="userSpaceOnUse" id="ac_fill-pattern_37"><image data-ac-wrapper-id="134" x="0" y="0" width="48" height="47.99999999999997" image-rendering="optimizeQuality" preserveAspectRatio="none meet" opacity="1" xlink:href="https://kowndinya2000.github.io/cs512.github.io/node_g.png" id="ac_image_38"></image></pattern><pattern data-ac-wrapper-id="136" x="15.302404416992388" y="165.14174470869602" width="48" height="48" patternUnits="userSpaceOnUse" id="ac_fill-pattern_3a"><image data-ac-wrapper-id="137" x="0" y="0" width="48" height="48" image-rendering="optimizeQuality" preserveAspectRatio="none meet" opacity="1" xlink:href="https://kowndinya2000.github.io/cs512.github.io/node_g.png" id="ac_image_3b"></image></pattern><pattern data-ac-wrapper-id="139" x="55.379323725959736" y="115.75702114351353" width="48" height="48" patternUnits="userSpaceOnUse" id="ac_fill-pattern_3d"><image data-ac-wrapper-id="140" x="0" y="0" width="48" height="48" image-rendering="optimizeQuality" preserveAspectRatio="none meet" opacity="1" xlink:href="https://kowndinya2000.github.io/cs512.github.io/node_g.png" id="ac_image_3e"></image></pattern><pattern data-ac-wrapper-id="142" x="158.3099707005101" y="91.10889122675566" width="48" height="47.999999999999986" patternUnits="userSpaceOnUse" id="ac_fill-pattern_3g"><image data-ac-wrapper-id="143" x="0" y="0" width="48" height="47.999999999999986" image-rendering="optimizeQuality" preserveAspectRatio="none meet" opacity="1" xlink:href="https://kowndinya2000.github.io/cs512.github.io/node_g.png" id="ac_image_3h"></image></pattern><pattern data-ac-wrapper-id="145" x="145.58779031814413" y="248.21674824256303" width="48" height="48" patternUnits="userSpaceOnUse" id="ac_fill-pattern_3j"><image data-ac-wrapper-id="146" x="0" y="0" width="48" height="48" image-rendering="optimizeQuality" preserveAspectRatio="none meet" opacity="1" xlink:href="https://kowndinya2000.github.io/cs512.github.io/node_g.png" id="ac_image_3k"></image></pattern><pattern data-ac-wrapper-id="148" x="265.6" y="115.12786274795923" width="48" height="48" patternUnits="userSpaceOnUse" id="ac_fill-pattern_3m"><image data-ac-wrapper-id="149" x="0" y="0" width="48" height="48" image-rendering="optimizeQuality" preserveAspectRatio="none meet" opacity="1" xlink:href="https://kowndinya2000.github.io/cs512.github.io/node_g.png" id="ac_image_3n"></image></pattern><pattern data-ac-wrapper-id="151" x="182.21065341128306" y="-24" width="48" height="48" patternUnits="userSpaceOnUse" id="ac_fill-pattern_3p"><image data-ac-wrapper-id="152" x="0" y="0" width="48" height="48" image-rendering="optimizeQuality" preserveAspectRatio="none meet" opacity="1" xlink:href="https://kowndinya2000.github.io/cs512.github.io/node_g.png" id="ac_image_3q"></image></pattern><pattern data-ac-wrapper-id="154" x="99.00841493592407" y="62.29551917169465" width="48" height="48" patternUnits="userSpaceOnUse" id="ac_fill-pattern_3s"><image data-ac-wrapper-id="155" x="0" y="0" width="48" height="48" image-rendering="optimizeQuality" preserveAspectRatio="none meet" opacity="1" xlink:href="https://kowndinya2000.github.io/cs512.github.io/node_g.png" id="ac_image_3t"></image></pattern><pattern data-ac-wrapper-id="157" x="60.6465833408585" y="-4.372223701391778" width="48" height="48" patternUnits="userSpaceOnUse" id="ac_fill-pattern_3v"><image data-ac-wrapper-id="158" x="0" y="0" width="48" height="48" image-rendering="optimizeQuality" preserveAspectRatio="none meet" opacity="1" xlink:href="https://kowndinya2000.github.io/cs512.github.io/node_g.png" id="ac_image_3w"></image></pattern><pattern data-ac-wrapper-id="160" x="-19.96279797511905" y="90.46760589831952" width="48" height="47.999999999999986" patternUnits="userSpaceOnUse" id="ac_fill-pattern_3y"><image data-ac-wrapper-id="161" x="0" y="0" width="48" height="47.999999999999986" image-rendering="optimizeQuality" preserveAspectRatio="none meet" opacity="1" xlink:href="https://kowndinya2000.github.io/cs512.github.io/node_g.png" id="ac_image_3z"></image></pattern><pattern data-ac-wrapper-id="163" x="138.76863275006482" y="187.1870598032688" width="48" height="48" patternUnits="userSpaceOnUse" id="ac_fill-pattern_41"><image data-ac-wrapper-id="164" x="0" y="0" width="48" height="48" image-rendering="optimizeQuality" preserveAspectRatio="none meet" opacity="1" xlink:href="https://kowndinya2000.github.io/cs512.github.io/node_g.png" id="ac_image_42"></image></pattern><pattern data-ac-wrapper-id="166" x="133.70300930295033" y="-15.779696040676175" width="48" height="48" patternUnits="userSpaceOnUse" id="ac_fill-pattern_44"><image data-ac-wrapper-id="167" x="0" y="0" width="48" height="48" image-rendering="optimizeQuality" preserveAspectRatio="none meet" opacity="1" xlink:href="https://kowndinya2000.github.io/cs512.github.io/node_g.png" id="ac_image_45"></image></pattern><pattern data-ac-wrapper-id="169" x="190.17680657243292" y="144.06793698687258" width="48" height="48" patternUnits="userSpaceOnUse" id="ac_fill-pattern_47"><image data-ac-wrapper-id="170" x="0" y="0" width="48" height="48" image-rendering="optimizeQuality" preserveAspectRatio="none meet" opacity="1" xlink:href="https://kowndinya2000.github.io/cs512.github.io/node_g.png" id="ac_image_48"></image></pattern><pattern data-ac-wrapper-id="172" x="89.41299403291706" y="265.97310949567395" width="48" height="48" patternUnits="userSpaceOnUse" id="ac_fill-pattern_4a"><image data-ac-wrapper-id="173" x="0" y="0" width="48" height="48" image-rendering="optimizeQuality" preserveAspectRatio="none meet" opacity="1" xlink:href="https://kowndinya2000.github.io/cs512.github.io/node_g.png" id="ac_image_4b"></image></pattern><pattern data-ac-wrapper-id="175" x="184.8183939335266" y="57.209798995185125" width="48" height="48" patternUnits="userSpaceOnUse" id="ac_fill-pattern_4d"><image data-ac-wrapper-id="176" x="0" y="0" width="48" height="48" image-rendering="optimizeQuality" preserveAspectRatio="none meet" opacity="1" xlink:href="https://kowndinya2000.github.io/cs512.github.io/node_g.png" id="ac_image_4e"></image></pattern><pattern data-ac-wrapper-id="178" x="14.92645219629901" y="265.18825928790443" width="48" height="48" patternUnits="userSpaceOnUse" id="ac_fill-pattern_4g"><image data-ac-wrapper-id="179" x="0" y="0" width="48" height="48" image-rendering="optimizeQuality" preserveAspectRatio="none meet" opacity="1" xlink:href="https://kowndinya2000.github.io/cs512.github.io/node_g.png" id="ac_image_4h"></image></pattern><clipPath clip-rule="nonzero" id="ac_clip_4q"><path data-ac-wrapper-id="182" id="ac_rect_4r" fill="none" stroke="black" d="M 10 10 L 324 10 324 630 10 630 10 10 Z"></path></clipPath><pattern data-ac-wrapper-id="183" x="107.34737879155827" y="43.37025048766628" width="48" height="48" patternUnits="userSpaceOnUse" id="ac_fill-pattern_4t"><image data-ac-wrapper-id="184" x="0" y="0" width="48" height="48" image-rendering="optimizeQuality" preserveAspectRatio="none meet" opacity="1" xlink:href="https://kowndinya2000.github.io/cs512.github.io/goal.png" id="ac_image_4u"></image></pattern><pattern data-ac-wrapper-id="185" x="170.09405042999313" y="76.07134381249324" width="48" height="48" patternUnits="userSpaceOnUse" id="ac_fill-pattern_4v"><image data-ac-wrapper-id="186" x="0" y="0" width="48" height="48" image-rendering="optimizeQuality" preserveAspectRatio="none meet" opacity="1" xlink:href="https://kowndinya2000.github.io/cs512.github.io/jerry.png" id="ac_image_4w"></image></pattern><pattern data-ac-wrapper-id="187" x="121.94671202403737" y="98.2545550882842" width="48" height="48" patternUnits="userSpaceOnUse" id="ac_fill-pattern_4x"><image data-ac-wrapper-id="188" x="0" y="0" width="48" height="48" image-rendering="optimizeQuality" preserveAspectRatio="none meet" opacity="1" xlink:href="https://kowndinya2000.github.io/cs512.github.io/tom.png" id="ac_image_4y"></image></pattern><pattern data-ac-wrapper-id="189" x="182.6959325365039" y="92.5926415271628" width="48" height="48.000000000000014" patternUnits="userSpaceOnUse" id="ac_fill-pattern_4z"><image data-ac-wrapper-id="190" x="0" y="0" width="48" height="48.000000000000014" image-rendering="optimizeQuality" preserveAspectRatio="none meet" opacity="1" xlink:href="https://kowndinya2000.github.io/cs512.github.io/node_g.png" id="ac_image_50"></image></pattern><pattern data-ac-wrapper-id="191" x="149.1810737927865" y="154.38649605607065" width="48" height="48" patternUnits="userSpaceOnUse" id="ac_fill-pattern_51"><image data-ac-wrapper-id="192" x="0" y="0" width="48" height="48" image-rendering="optimizeQuality" preserveAspectRatio="none meet" opacity="1" xlink:href="https://kowndinya2000.github.io/cs512.github.io/node_g.png" id="ac_image_52"></image></pattern><pattern data-ac-wrapper-id="193" x="118.14246346292296" y="74.60332337298956" width="48" height="48" patternUnits="userSpaceOnUse" id="ac_fill-pattern_53"><image data-ac-wrapper-id="194" x="0" y="0" width="48" height="48" image-rendering="optimizeQuality" preserveAspectRatio="none meet" opacity="1" xlink:href="https://kowndinya2000.github.io/cs512.github.io/node_g.png" id="ac_image_54"></image></pattern><pattern data-ac-wrapper-id="195" x="55.23223934572904" y="60.77799177298863" width="48" height="48" patternUnits="userSpaceOnUse" id="ac_fill-pattern_55"><image data-ac-wrapper-id="196" x="0" y="0" width="48" height="48" image-rendering="optimizeQuality" preserveAspectRatio="none meet" opacity="1" xlink:href="https://kowndinya2000.github.io/cs512.github.io/node_g.png" id="ac_image_56"></image></pattern><pattern data-ac-wrapper-id="197" x="8.777014335930183" y="22.395381227744892" width="48" height="48" patternUnits="userSpaceOnUse" id="ac_fill-pattern_57"><image data-ac-wrapper-id="198" x="0" y="0" width="48" height="48" image-rendering="optimizeQuality" preserveAspectRatio="none meet" opacity="1" xlink:href="https://kowndinya2000.github.io/cs512.github.io/node_g.png" id="ac_image_58"></image></pattern><pattern data-ac-wrapper-id="199" x="70.4284718562702" y="188.1204037889811" width="48" height="48" patternUnits="userSpaceOnUse" id="ac_fill-pattern_59"><image data-ac-wrapper-id="200" x="0" y="0" width="48" height="48" image-rendering="optimizeQuality" preserveAspectRatio="none meet" opacity="1" xlink:href="https://kowndinya2000.github.io/cs512.github.io/node_g.png" id="ac_image_5a"></image></pattern><pattern data-ac-wrapper-id="201" x="133.72840226698474" y="113.52024142594144" width="48" height="48" patternUnits="userSpaceOnUse" id="ac_fill-pattern_5b"><image data-ac-wrapper-id="202" x="0" y="0" width="48" height="48" image-rendering="optimizeQuality" preserveAspectRatio="none meet" opacity="1" xlink:href="https://kowndinya2000.github.io/cs512.github.io/node_g.png" id="ac_image_5c"></image></pattern><pattern data-ac-wrapper-id="203" x="216.23840563767504" y="166.80411783071864" width="48" height="48" patternUnits="userSpaceOnUse" id="ac_fill-pattern_5d"><image data-ac-wrapper-id="204" x="0" y="0" width="48" height="48" image-rendering="optimizeQuality" preserveAspectRatio="none meet" opacity="1" xlink:href="https://kowndinya2000.github.io/cs512.github.io/node_g.png" id="ac_image_5e"></image></pattern><pattern data-ac-wrapper-id="205" x="80.28146847153909" y="161.5993797480583" width="48" height="48" patternUnits="userSpaceOnUse" id="ac_fill-pattern_5f"><image data-ac-wrapper-id="206" x="0" y="0" width="48" height="48" image-rendering="optimizeQuality" preserveAspectRatio="none meet" opacity="1" xlink:href="https://kowndinya2000.github.io/cs512.github.io/node_g.png" id="ac_image_5g"></image></pattern><pattern data-ac-wrapper-id="207" x="120.8875090932284" y="134.80366654436352" width="48" height="48" patternUnits="userSpaceOnUse" id="ac_fill-pattern_5h"><image data-ac-wrapper-id="208" x="0" y="0" width="48" height="48" image-rendering="optimizeQuality" preserveAspectRatio="none meet" opacity="1" xlink:href="https://kowndinya2000.github.io/cs512.github.io/node_g.png" id="ac_image_5i"></image></pattern><pattern data-ac-wrapper-id="209" x="195.65611790464678" y="41.793329595589086" width="48" height="48" patternUnits="userSpaceOnUse" id="ac_fill-pattern_5j"><image data-ac-wrapper-id="210" x="0" y="0" width="48" height="48" image-rendering="optimizeQuality" preserveAspectRatio="none meet" opacity="1" xlink:href="https://kowndinya2000.github.io/cs512.github.io/node_g.png" id="ac_image_5k"></image></pattern><pattern data-ac-wrapper-id="211" x="44.287937667769796" y="194.37859598747758" width="48" height="48" patternUnits="userSpaceOnUse" id="ac_fill-pattern_5l"><image data-ac-wrapper-id="212" x="0" y="0" width="48" height="48" image-rendering="optimizeQuality" preserveAspectRatio="none meet" opacity="1" xlink:href="https://kowndinya2000.github.io/cs512.github.io/node_g.png" id="ac_image_5m"></image></pattern><pattern data-ac-wrapper-id="213" x="52.43712724919743" y="134.5333477176671" width="48" height="48" patternUnits="userSpaceOnUse" id="ac_fill-pattern_5n"><image data-ac-wrapper-id="214" x="0" y="0" width="48" height="48" image-rendering="optimizeQuality" preserveAspectRatio="none meet" opacity="1" xlink:href="https://kowndinya2000.github.io/cs512.github.io/node_g.png" id="ac_image_5o"></image></pattern><pattern data-ac-wrapper-id="215" x="23.311305766140123" y="83.03129190247583" width="48" height="48" patternUnits="userSpaceOnUse" id="ac_fill-pattern_5p"><image data-ac-wrapper-id="216" x="0" y="0" width="48" height="48" image-rendering="optimizeQuality" preserveAspectRatio="none meet" opacity="1" xlink:href="https://kowndinya2000.github.io/cs512.github.io/node_g.png" id="ac_image_5q"></image></pattern><pattern data-ac-wrapper-id="217" x="-24" y="137.39167695894741" width="48" height="48" patternUnits="userSpaceOnUse" id="ac_fill-pattern_5r"><image data-ac-wrapper-id="218" x="0" y="0" width="48" height="48" image-rendering="optimizeQuality" preserveAspectRatio="none meet" opacity="1" xlink:href="https://kowndinya2000.github.io/cs512.github.io/node_g.png" id="ac_image_5s"></image></pattern><pattern data-ac-wrapper-id="219" x="166.52611141975737" y="209.43410297572817" width="48" height="47.99999999999997" patternUnits="userSpaceOnUse" id="ac_fill-pattern_5t"><image data-ac-wrapper-id="220" x="0" y="0" width="48" height="47.99999999999997" image-rendering="optimizeQuality" preserveAspectRatio="none meet" opacity="1" xlink:href="https://kowndinya2000.github.io/cs512.github.io/node_g.png" id="ac_image_5u"></image></pattern><pattern data-ac-wrapper-id="221" x="157.94296521998768" y="183.08075097403236" width="48" height="48" patternUnits="userSpaceOnUse" id="ac_fill-pattern_5v"><image data-ac-wrapper-id="222" x="0" y="0" width="48" height="48" image-rendering="optimizeQuality" preserveAspectRatio="none meet" opacity="1" xlink:href="https://kowndinya2000.github.io/cs512.github.io/node_g.png" id="ac_image_5w"></image></pattern><pattern data-ac-wrapper-id="223" x="-9.407498960837259" y="54.68593924396197" width="48" height="48" patternUnits="userSpaceOnUse" id="ac_fill-pattern_5x"><image data-ac-wrapper-id="224" x="0" y="0" width="48" height="48" image-rendering="optimizeQuality" preserveAspectRatio="none meet" opacity="1" xlink:href="https://kowndinya2000.github.io/cs512.github.io/node_g.png" id="ac_image_5y"></image></pattern><pattern data-ac-wrapper-id="225" x="199.90552417298818" y="117.83132174419555" width="48" height="48" patternUnits="userSpaceOnUse" id="ac_fill-pattern_5z"><image data-ac-wrapper-id="226" x="0" y="0" width="48" height="48" image-rendering="optimizeQuality" preserveAspectRatio="none meet" opacity="1" xlink:href="https://kowndinya2000.github.io/cs512.github.io/node_g.png" id="ac_image_60"></image></pattern><pattern data-ac-wrapper-id="227" x="24.38227306657781" y="100.4338049696661" width="48" height="47.999999999999986" patternUnits="userSpaceOnUse" id="ac_fill-pattern_61"><image data-ac-wrapper-id="228" x="0" y="0" width="48" height="47.999999999999986" image-rendering="optimizeQuality" preserveAspectRatio="none meet" opacity="1" xlink:href="https://kowndinya2000.github.io/cs512.github.io/node_g.png" id="ac_image_62"></image></pattern><pattern data-ac-wrapper-id="229" x="46.69938315004916" y="171.38967550821283" width="48" height="48" patternUnits="userSpaceOnUse" id="ac_fill-pattern_63"><image data-ac-wrapper-id="230" x="0" y="0" width="48" height="48" image-rendering="optimizeQuality" preserveAspectRatio="none meet" opacity="1" xlink:href="https://kowndinya2000.github.io/cs512.github.io/node_g.png" id="ac_image_64"></image></pattern><pattern data-ac-wrapper-id="231" x="49.71019460448228" y="40.219654715643244" width="48" height="48" patternUnits="userSpaceOnUse" id="ac_fill-pattern_65"><image data-ac-wrapper-id="232" x="0" y="0" width="48" height="48" image-rendering="optimizeQuality" preserveAspectRatio="none meet" opacity="1" xlink:href="https://kowndinya2000.github.io/cs512.github.io/node_g.png" id="ac_image_66"></image></pattern><pattern data-ac-wrapper-id="233" x="12.316211668959454" y="158.37288771865246" width="48" height="48" patternUnits="userSpaceOnUse" id="ac_fill-pattern_67"><image data-ac-wrapper-id="234" x="0" y="0" width="48" height="48" image-rendering="optimizeQuality" preserveAspectRatio="none meet" opacity="1" xlink:href="https://kowndinya2000.github.io/cs512.github.io/node_g.png" id="ac_image_68"></image></pattern><pattern data-ac-wrapper-id="235" x="30.58999255499168" y="46.62199107082749" width="48" height="48" patternUnits="userSpaceOnUse" id="ac_fill-pattern_69"><image data-ac-wrapper-id="236" x="0" y="0" width="48" height="48" image-rendering="optimizeQuality" preserveAspectRatio="none meet" opacity="1" xlink:href="https://kowndinya2000.github.io/cs512.github.io/node_g.png" id="ac_image_6a"></image></pattern><pattern data-ac-wrapper-id="237" x="69.822025709877" y="145.435563596682" width="48" height="48" patternUnits="userSpaceOnUse" id="ac_fill-pattern_6b"><image data-ac-wrapper-id="238" x="0" y="0" width="48" height="48" image-rendering="optimizeQuality" preserveAspectRatio="none meet" opacity="1" xlink:href="https://kowndinya2000.github.io/cs512.github.io/node_g.png" id="ac_image_6c"></image></pattern><pattern data-ac-wrapper-id="239" x="99.73476200113592" y="128.97671345035621" width="48" height="48" patternUnits="userSpaceOnUse" id="ac_fill-pattern_6d"><image data-ac-wrapper-id="240" x="0" y="0" width="48" height="48" image-rendering="optimizeQuality" preserveAspectRatio="none meet" opacity="1" xlink:href="https://kowndinya2000.github.io/cs512.github.io/node_g.png" id="ac_image_6e"></image></pattern><pattern data-ac-wrapper-id="241" x="81.11458714898271" y="-13.455211040831994" width="48" height="48" patternUnits="userSpaceOnUse" id="ac_fill-pattern_6f"><image data-ac-wrapper-id="242" x="0" y="0" width="48" height="48" image-rendering="optimizeQuality" preserveAspectRatio="none meet" opacity="1" xlink:href="https://kowndinya2000.github.io/cs512.github.io/node_g.png" id="ac_image_6g"></image></pattern><pattern data-ac-wrapper-id="243" x="97.01305125507844" y="82.88076200073779" width="48" height="47.999999999999986" patternUnits="userSpaceOnUse" id="ac_fill-pattern_6h"><image data-ac-wrapper-id="244" x="0" y="0" width="48" height="47.999999999999986" image-rendering="optimizeQuality" preserveAspectRatio="none meet" opacity="1" xlink:href="https://kowndinya2000.github.io/cs512.github.io/node_g.png" id="ac_image_6i"></image></pattern><pattern data-ac-wrapper-id="245" x="90.54546684902601" y="117.92374281031516" width="48" height="48" patternUnits="userSpaceOnUse" id="ac_fill-pattern_6j"><image data-ac-wrapper-id="246" x="0" y="0" width="48" height="48" image-rendering="optimizeQuality" preserveAspectRatio="none meet" opacity="1" xlink:href="https://kowndinya2000.github.io/cs512.github.io/node_g.png" id="ac_image_6k"></image></pattern><pattern data-ac-wrapper-id="247" x="65.78297154872648" y="92.63881120661439" width="48" height="47.999999999999986" patternUnits="userSpaceOnUse" id="ac_fill-pattern_6l"><image data-ac-wrapper-id="248" x="0" y="0" width="48" height="47.999999999999986" image-rendering="optimizeQuality" preserveAspectRatio="none meet" opacity="1" xlink:href="https://kowndinya2000.github.io/cs512.github.io/node_g.png" id="ac_image_6m"></image></pattern><pattern data-ac-wrapper-id="249" x="124.38845422566729" y="186.33481119232846" width="48" height="48" patternUnits="userSpaceOnUse" id="ac_fill-pattern_6n"><image data-ac-wrapper-id="250" x="0" y="0" width="48" height="48" image-rendering="optimizeQuality" preserveAspectRatio="none meet" opacity="1" xlink:href="https://kowndinya2000.github.io/cs512.github.io/node_g.png" id="ac_image_6o"></image></pattern><pattern data-ac-wrapper-id="251" x="96.6047083240392" y="178.1770939384879" width="48" height="48" patternUnits="userSpaceOnUse" id="ac_fill-pattern_6p"><image data-ac-wrapper-id="252" x="0" y="0" width="48" height="48" image-rendering="optimizeQuality" preserveAspectRatio="none meet" opacity="1" xlink:href="https://kowndinya2000.github.io/cs512.github.io/node_g.png" id="ac_image_6q"></image></pattern><pattern data-ac-wrapper-id="253" x="10.09103587551273" y="140.06217634953188" width="48" height="48" patternUnits="userSpaceOnUse" id="ac_fill-pattern_6r"><image data-ac-wrapper-id="254" x="0" y="0" width="48" height="48" image-rendering="optimizeQuality" preserveAspectRatio="none meet" opacity="1" xlink:href="https://kowndinya2000.github.io/cs512.github.io/node_g.png" id="ac_image_6s"></image></pattern><pattern data-ac-wrapper-id="255" x="44.853888535777216" y="97.22570342282664" width="48" height="48.000000000000014" patternUnits="userSpaceOnUse" id="ac_fill-pattern_6t"><image data-ac-wrapper-id="256" x="0" y="0" width="48" height="48.000000000000014" image-rendering="optimizeQuality" preserveAspectRatio="none meet" opacity="1" xlink:href="https://kowndinya2000.github.io/cs512.github.io/node_g.png" id="ac_image_6u"></image></pattern><pattern data-ac-wrapper-id="257" x="134.13627292806675" y="75.84583382652285" width="48" height="48" patternUnits="userSpaceOnUse" id="ac_fill-pattern_6v"><image data-ac-wrapper-id="258" x="0" y="0" width="48" height="48" image-rendering="optimizeQuality" preserveAspectRatio="none meet" opacity="1" xlink:href="https://kowndinya2000.github.io/cs512.github.io/node_g.png" id="ac_image_6w"></image></pattern><pattern data-ac-wrapper-id="259" x="123.10101149142886" y="212.12170980156017" width="48" height="48.00000000000003" patternUnits="userSpaceOnUse" id="ac_fill-pattern_6x"><image data-ac-wrapper-id="260" x="0" y="0" width="48" height="48.00000000000003" image-rendering="optimizeQuality" preserveAspectRatio="none meet" opacity="1" xlink:href="https://kowndinya2000.github.io/cs512.github.io/node_g.png" id="ac_image_6y"></image></pattern><pattern data-ac-wrapper-id="261" x="227.2" y="96.6799693449149" width="48" height="48" patternUnits="userSpaceOnUse" id="ac_fill-pattern_6z"><image data-ac-wrapper-id="262" x="0" y="0" width="48" height="48" image-rendering="optimizeQuality" preserveAspectRatio="none meet" opacity="1" xlink:href="https://kowndinya2000.github.io/cs512.github.io/node_g.png" id="ac_image_70"></image></pattern><pattern data-ac-wrapper-id="263" x="154.86780434017368" y="-24" width="48" height="48" patternUnits="userSpaceOnUse" id="ac_fill-pattern_71"><image data-ac-wrapper-id="264" x="0" y="0" width="48" height="48" image-rendering="optimizeQuality" preserveAspectRatio="none meet" opacity="1" xlink:href="https://kowndinya2000.github.io/cs512.github.io/node_g.png" id="ac_image_72"></image></pattern><pattern data-ac-wrapper-id="265" x="82.69790687812196" y="50.85301939202242" width="48" height="48" patternUnits="userSpaceOnUse" id="ac_fill-pattern_73"><image data-ac-wrapper-id="266" x="0" y="0" width="48" height="48" image-rendering="optimizeQuality" preserveAspectRatio="none meet" opacity="1" xlink:href="https://kowndinya2000.github.io/cs512.github.io/node_g.png" id="ac_image_74"></image></pattern><pattern data-ac-wrapper-id="267" x="49.422726986269524" y="-6.974801774135411" width="48" height="48" patternUnits="userSpaceOnUse" id="ac_fill-pattern_75"><image data-ac-wrapper-id="268" x="0" y="0" width="48" height="48" image-rendering="optimizeQuality" preserveAspectRatio="none meet" opacity="1" xlink:href="https://kowndinya2000.github.io/cs512.github.io/node_g.png" id="ac_image_76"></image></pattern><pattern data-ac-wrapper-id="269" x="-20.498117580628126" y="75.28958080682962" width="48" height="48" patternUnits="userSpaceOnUse" id="ac_fill-pattern_77"><image data-ac-wrapper-id="270" x="0" y="0" width="48" height="48" image-rendering="optimizeQuality" preserveAspectRatio="none meet" opacity="1" xlink:href="https://kowndinya2000.github.io/cs512.github.io/node_g.png" id="ac_image_78"></image></pattern><pattern data-ac-wrapper-id="271" x="117.18605161193466" y="159.18435574095687" width="48" height="48" patternUnits="userSpaceOnUse" id="ac_fill-pattern_79"><image data-ac-wrapper-id="272" x="0" y="0" width="48" height="48" image-rendering="optimizeQuality" preserveAspectRatio="none meet" opacity="1" xlink:href="https://kowndinya2000.github.io/cs512.github.io/node_g.png" id="ac_image_7a"></image></pattern><pattern data-ac-wrapper-id="273" x="112.79211304178563" y="-16.86968109605613" width="48" height="48" patternUnits="userSpaceOnUse" id="ac_fill-pattern_7b"><image data-ac-wrapper-id="274" x="0" y="0" width="48" height="48" image-rendering="optimizeQuality" preserveAspectRatio="none meet" opacity="1" xlink:href="https://kowndinya2000.github.io/cs512.github.io/node_g.png" id="ac_image_7c"></image></pattern><pattern data-ac-wrapper-id="275" x="161.77767199929264" y="121.78268567369608" width="48" height="48" patternUnits="userSpaceOnUse" id="ac_fill-pattern_7d"><image data-ac-wrapper-id="276" x="0" y="0" width="48" height="48" image-rendering="optimizeQuality" preserveAspectRatio="none meet" opacity="1" xlink:href="https://kowndinya2000.github.io/cs512.github.io/node_g.png" id="ac_image_7e"></image></pattern><pattern data-ac-wrapper-id="277" x="74.37480697882859" y="227.52363641337462" width="48" height="48" patternUnits="userSpaceOnUse" id="ac_fill-pattern_7f"><image data-ac-wrapper-id="278" x="0" y="0" width="48" height="48" image-rendering="optimizeQuality" preserveAspectRatio="none meet" opacity="1" xlink:href="https://kowndinya2000.github.io/cs512.github.io/node_g.png" id="ac_image_7g"></image></pattern><pattern data-ac-wrapper-id="279" x="157.12976711361145" y="46.44164885217714" width="48" height="48" patternUnits="userSpaceOnUse" id="ac_fill-pattern_7h"><image data-ac-wrapper-id="280" x="0" y="0" width="48" height="48" image-rendering="optimizeQuality" preserveAspectRatio="none meet" opacity="1" xlink:href="https://kowndinya2000.github.io/cs512.github.io/node_g.png" id="ac_image_7i"></image></pattern><pattern data-ac-wrapper-id="281" x="9.764933673032836" y="226.84285474144193" width="48" height="47.99999999999997" patternUnits="userSpaceOnUse" id="ac_fill-pattern_7j"><image data-ac-wrapper-id="282" x="0" y="0" width="48" height="47.99999999999997" image-rendering="optimizeQuality" preserveAspectRatio="none meet" opacity="1" xlink:href="https://kowndinya2000.github.io/cs512.github.io/node_g.png" id="ac_image_7k"></image></pattern></defs><g data-ac-wrapper-id="12" id="ac_layer_1"><g data-ac-wrapper-id="14" role="article" aria-label="graph chart " id="ac_chart_2"><g data-ac-wrapper-id="15" id="ac_layer_4"><path data-ac-wrapper-id="16" id="ac_path_3" fill="#ffffff" stroke="none" d="M 0 0 L 334 0 334 0 334 640 334 640 0 640 0 640 0 0 0 0 Z"></path></g><g data-ac-wrapper-id="17" clip-path="url(&quot;#ac_clip_4q&quot;)" clipPathUnits="userSpaceOnUse" id="ac_layer_4s"><g data-ac-wrapper-id="18" id="ac_layer_6"><path data-ac-wrapper-id="19" id="ac_rect_5" fill="#fff" fill-opacity="0.00001" stroke="none" d="M 10 10 L 324 10 324 630 10 630 10 10 Z"></path></g><g data-ac-wrapper-id="20" transform="matrix(1,0,0,1,41.400000000000006,194.2381817933127)" id="ac_layer_4o"><g data-ac-wrapper-id="21" id="ac_layer_4m"><g data-ac-wrapper-id="22" id="ac_layer_b"><g data-ac-wrapper-id="23" id="ac_layer_a"><g data-ac-wrapper-id="24" id="ac_layer_8"><path data-ac-wrapper-id="13" d="M 131.34737879155827 67.37025048766628 L 194.09405042999313 100.07134381249324 M 131.34737879155827 67.37025048766628 L 173.1810737927865 178.38649605607065 M 131.34737879155827 67.37025048766628 L 142.14246346292296 98.60332337298956 M 131.34737879155827 67.37025048766628 L 32.77701433593018 46.39538122774489 M 131.34737879155827 67.37025048766628 L 157.72840226698474 137.52024142594144 M 131.34737879155827 67.37025048766628 L 47.31130576614013 107.03129190247583 M 131.34737879155827 67.37025048766628 L 93.822025709877 169.435563596682 M 131.34737879155827 67.37025048766628 L 105.11458714898271 10.544788959168006 M 131.34737879155827 67.37025048766628 L 121.01305125507844 106.88076200073779 M 131.34737879155827 67.37025048766628 L 68.85388853577722 121.22570342282664 M 131.34737879155827 67.37025048766628 L 251.2 120.6799693449149 M 131.34737879155827 67.37025048766628 L 3.501882419371874 99.28958080682962 M 131.34737879155827 67.37025048766628 L 136.79211304178563 7.13031890394387 M 194.09405042999313 100.07134381249324 L 145.94671202403737 122.2545550882842 M 194.09405042999313 100.07134381249324 L 173.1810737927865 178.38649605607065 M 194.09405042999313 100.07134381249324 L 104.2814684715391 185.5993797480583 M 194.09405042999313 100.07134381249324 L 144.8875090932284 158.80366654436352 M 194.09405042999313 100.07134381249324 L 219.65611790464678 65.79332959558909 M 194.09405042999313 100.07134381249324 L 190.52611141975737 233.43410297572817 M 194.09405042999313 100.07134381249324 L 105.11458714898271 10.544788959168006 M 194.09405042999313 100.07134381249324 L 114.54546684902603 141.92374281031516 M 194.09405042999313 100.07134381249324 L 136.79211304178563 7.13031890394387 M 145.94671202403737 122.2545550882842 L 79.23223934572904 84.77799177298863 M 145.94671202403737 122.2545550882842 L 94.4284718562702 212.1204037889811 M 145.94671202403737 122.2545550882842 L 219.65611790464678 65.79332959558909 M 145.94671202403737 122.2545550882842 L 76.43712724919743 158.5333477176671 M 145.94671202403737 122.2545550882842 L 190.52611141975737 233.43410297572817 M 145.94671202403737 122.2545550882842 L 14.592501039162745 78.68593924396197 M 145.94671202403737 122.2545550882842 L 223.90552417298818 141.83132174419555 M 145.94671202403737 122.2545550882842 L 73.71019460448228 64.21965471564324 M 145.94671202403737 122.2545550882842 L 93.822025709877 169.435563596682 M 145.94671202403737 122.2545550882842 L 121.01305125507844 106.88076200073779 M 145.94671202403737 122.2545550882842 L 89.78297154872648 116.63881120661439 M 145.94671202403737 122.2545550882842 L 178.86780434017368 0 M 145.94671202403737 122.2545550882842 L 141.18605161193466 183.18435574095687 M 206.6959325365039 116.5926415271628 L 173.1810737927865 178.38649605607065 M 206.6959325365039 116.5926415271628 L 142.14246346292296 98.60332337298956 M 206.6959325365039 116.5926415271628 L 157.72840226698474 137.52024142594144 M 206.6959325365039 116.5926415271628 L 219.65611790464678 65.79332959558909 M 206.6959325365039 116.5926415271628 L 181.94296521998768 207.08075097403236 M 206.6959325365039 116.5926415271628 L 73.71019460448228 64.21965471564324 M 206.6959325365039 116.5926415271628 L 121.01305125507844 106.88076200073779 M 206.6959325365039 116.5926415271628 L 158.13627292806675 99.84583382652285 M 206.6959325365039 116.5926415271628 L 147.10101149142886 236.12170980156017 M 206.6959325365039 116.5926415271628 L 251.2 120.6799693449149 M 206.6959325365039 116.5926415271628 L 106.69790687812197 74.85301939202242 M 206.6959325365039 116.5926415271628 L 185.77767199929264 145.78268567369608 M 173.1810737927865 178.38649605607065 L 68.2879376677698 218.37859598747758 M 173.1810737927865 178.38649605607065 L 93.822025709877 169.435563596682 M 173.1810737927865 178.38649605607065 L 123.73476200113592 152.97671345035621 M 173.1810737927865 178.38649605607065 L 121.01305125507844 106.88076200073779 M 173.1810737927865 178.38649605607065 L 148.3884542256673 210.33481119232846 M 173.1810737927865 178.38649605607065 L 141.18605161193466 183.18435574095687 M 173.1810737927865 178.38649605607065 L 98.37480697882859 251.52363641337462 M 142.14246346292296 98.60332337298956 L 32.77701433593018 46.39538122774489 M 142.14246346292296 98.60332337298956 L 157.72840226698474 137.52024142594144 M 142.14246346292296 98.60332337298956 L 181.94296521998768 207.08075097403236 M 142.14246346292296 98.60332337298956 L 223.90552417298818 141.83132174419555 M 142.14246346292296 98.60332337298956 L 93.822025709877 169.435563596682 M 142.14246346292296 98.60332337298956 L 105.11458714898271 10.544788959168006 M 142.14246346292296 98.60332337298956 L 121.01305125507844 106.88076200073779 M 142.14246346292296 98.60332337298956 L 89.78297154872648 116.63881120661439 M 142.14246346292296 98.60332337298956 L 148.3884542256673 210.33481119232846 M 142.14246346292296 98.60332337298956 L 34.09103587551273 164.06217634953188 M 79.23223934572904 84.77799177298863 L 32.77701433593018 46.39538122774489 M 79.23223934572904 84.77799177298863 L 144.8875090932284 158.80366654436352 M 79.23223934572904 84.77799177298863 L 219.65611790464678 65.79332959558909 M 79.23223934572904 84.77799177298863 L 0 161.39167695894741 M 79.23223934572904 84.77799177298863 L 48.38227306657781 124.4338049696661 M 79.23223934572904 84.77799177298863 L 70.69938315004916 195.38967550821283 M 79.23223934572904 84.77799177298863 L 54.58999255499169 70.62199107082749 M 79.23223934572904 84.77799177298863 L 106.69790687812197 74.85301939202242 M 79.23223934572904 84.77799177298863 L 136.79211304178563 7.13031890394387 M 32.77701433593018 46.39538122774489 L 0 161.39167695894741 M 32.77701433593018 46.39538122774489 L 14.592501039162745 78.68593924396197 M 32.77701433593018 46.39538122774489 L 48.38227306657781 124.4338049696661 M 32.77701433593018 46.39538122774489 L 73.71019460448228 64.21965471564324 M 32.77701433593018 46.39538122774489 L 123.73476200113592 152.97671345035621 M 32.77701433593018 46.39538122774489 L 105.11458714898271 10.544788959168006 M 32.77701433593018 46.39538122774489 L 68.85388853577722 121.22570342282664 M 94.4284718562702 212.1204037889811 L 157.72840226698474 137.52024142594144 M 94.4284718562702 212.1204037889811 L 104.2814684715391 185.5993797480583 M 94.4284718562702 212.1204037889811 L 144.8875090932284 158.80366654436352 M 94.4284718562702 212.1204037889811 L 68.2879376677698 218.37859598747758 M 94.4284718562702 212.1204037889811 L 76.43712724919743 158.5333477176671 M 94.4284718562702 212.1204037889811 L 190.52611141975737 233.43410297572817 M 94.4284718562702 212.1204037889811 L 54.58999255499169 70.62199107082749 M 94.4284718562702 212.1204037889811 L 93.822025709877 169.435563596682 M 94.4284718562702 212.1204037889811 L 68.85388853577722 121.22570342282664 M 94.4284718562702 212.1204037889811 L 98.37480697882859 251.52363641337462 M 94.4284718562702 212.1204037889811 L 33.764933673032836 250.84285474144193 M 157.72840226698474 137.52024142594144 L 240.23840563767504 190.80411783071864 M 157.72840226698474 137.52024142594144 L 104.2814684715391 185.5993797480583 M 157.72840226698474 137.52024142594144 L 219.65611790464678 65.79332959558909 M 157.72840226698474 137.52024142594144 L 48.38227306657781 124.4338049696661 M 157.72840226698474 137.52024142594144 L 36.316211668959454 182.37288771865246 M 157.72840226698474 137.52024142594144 L 93.822025709877 169.435563596682 M 157.72840226698474 137.52024142594144 L 148.3884542256673 210.33481119232846 M 157.72840226698474 137.52024142594144 L 68.85388853577722 121.22570342282664 M 157.72840226698474 137.52024142594144 L 251.2 120.6799693449149 M 157.72840226698474 137.52024142594144 L 178.86780434017368 0 M 240.23840563767504 190.80411783071864 L 123.73476200113592 152.97671345035621 M 240.23840563767504 190.80411783071864 L 147.10101149142886 236.12170980156017 M 240.23840563767504 190.80411783071864 L 141.18605161193466 183.18435574095687 M 240.23840563767504 190.80411783071864 L 185.77767199929264 145.78268567369608 M 240.23840563767504 190.80411783071864 L 181.12976711361145 70.44164885217714 M 104.2814684715391 185.5993797480583 L 144.8875090932284 158.80366654436352 M 104.2814684715391 185.5993797480583 L 76.43712724919743 158.5333477176671 M 104.2814684715391 185.5993797480583 L 14.592501039162745 78.68593924396197 M 104.2814684715391 185.5993797480583 L 48.38227306657781 124.4338049696661 M 104.2814684715391 185.5993797480583 L 36.316211668959454 182.37288771865246 M 104.2814684715391 185.5993797480583 L 148.3884542256673 210.33481119232846 M 104.2814684715391 185.5993797480583 L 147.10101149142886 236.12170980156017 M 104.2814684715391 185.5993797480583 L 185.77767199929264 145.78268567369608 M 104.2814684715391 185.5993797480583 L 98.37480697882859 251.52363641337462 M 144.8875090932284 158.80366654436352 L 223.90552417298818 141.83132174419555 M 144.8875090932284 158.80366654436352 L 48.38227306657781 124.4338049696661 M 144.8875090932284 158.80366654436352 L 70.69938315004916 195.38967550821283 M 144.8875090932284 158.80366654436352 L 93.822025709877 169.435563596682 M 144.8875090932284 158.80366654436352 L 89.78297154872648 116.63881120661439 M 144.8875090932284 158.80366654436352 L 141.18605161193466 183.18435574095687 M 144.8875090932284 158.80366654436352 L 185.77767199929264 145.78268567369608 M 144.8875090932284 158.80366654436352 L 181.12976711361145 70.44164885217714 M 219.65611790464678 65.79332959558909 L 223.90552417298818 141.83132174419555 M 219.65611790464678 65.79332959558909 L 123.73476200113592 152.97671345035621 M 219.65611790464678 65.79332959558909 L 158.13627292806675 99.84583382652285 M 219.65611790464678 65.79332959558909 L 181.12976711361145 70.44164885217714 M 68.2879376677698 218.37859598747758 L 0 161.39167695894741 M 68.2879376677698 218.37859598747758 L 181.94296521998768 207.08075097403236 M 68.2879376677698 218.37859598747758 L 70.69938315004916 195.38967550821283 M 68.2879376677698 218.37859598747758 L 68.85388853577722 121.22570342282664 M 68.2879376677698 218.37859598747758 L 158.13627292806675 99.84583382652285 M 68.2879376677698 218.37859598747758 L 3.501882419371874 99.28958080682962 M 68.2879376677698 218.37859598747758 L 141.18605161193466 183.18435574095687 M 68.2879376677698 218.37859598747758 L 33.764933673032836 250.84285474144193 M 76.43712724919743 158.5333477176671 L 73.71019460448228 64.21965471564324 M 76.43712724919743 158.5333477176671 L 54.58999255499169 70.62199107082749 M 76.43712724919743 158.5333477176671 L 148.3884542256673 210.33481119232846 M 76.43712724919743 158.5333477176671 L 158.13627292806675 99.84583382652285 M 76.43712724919743 158.5333477176671 L 3.501882419371874 99.28958080682962 M 76.43712724919743 158.5333477176671 L 185.77767199929264 145.78268567369608 M 76.43712724919743 158.5333477176671 L 98.37480697882859 251.52363641337462 M 47.31130576614013 107.03129190247583 L 14.592501039162745 78.68593924396197 M 47.31130576614013 107.03129190247583 L 93.822025709877 169.435563596682 M 47.31130576614013 107.03129190247583 L 89.78297154872648 116.63881120661439 M 47.31130576614013 107.03129190247583 L 68.85388853577722 121.22570342282664 M 47.31130576614013 107.03129190247583 L 106.69790687812197 74.85301939202242 M 47.31130576614013 107.03129190247583 L 98.37480697882859 251.52363641337462 M 47.31130576614013 107.03129190247583 L 181.12976711361145 70.44164885217714 M 0 161.39167695894741 L 14.592501039162745 78.68593924396197 M 0 161.39167695894741 L 36.316211668959454 182.37288771865246 M 0 161.39167695894741 L 93.822025709877 169.435563596682 M 0 161.39167695894741 L 147.10101149142886 236.12170980156017 M 190.52611141975737 233.43410297572817 L 181.94296521998768 207.08075097403236 M 190.52611141975737 233.43410297572817 L 114.54546684902603 141.92374281031516 M 190.52611141975737 233.43410297572817 L 148.3884542256673 210.33481119232846 M 190.52611141975737 233.43410297572817 L 120.6047083240392 202.1770939384879 M 190.52611141975737 233.43410297572817 L 147.10101149142886 236.12170980156017 M 181.94296521998768 207.08075097403236 L 93.822025709877 169.435563596682 M 181.94296521998768 207.08075097403236 L 123.73476200113592 152.97671345035621 M 181.94296521998768 207.08075097403236 L 148.3884542256673 210.33481119232846 M 181.94296521998768 207.08075097403236 L 147.10101149142886 236.12170980156017 M 181.94296521998768 207.08075097403236 L 98.37480697882859 251.52363641337462 M 181.94296521998768 207.08075097403236 L 181.12976711361145 70.44164885217714 M 14.592501039162745 78.68593924396197 L 54.58999255499169 70.62199107082749 M 14.592501039162745 78.68593924396197 L 121.01305125507844 106.88076200073779 M 14.592501039162745 78.68593924396197 L 106.69790687812197 74.85301939202242 M 14.592501039162745 78.68593924396197 L 73.42272698626952 17.02519822586459 M 14.592501039162745 78.68593924396197 L 3.501882419371874 99.28958080682962 M 223.90552417298818 141.83132174419555 L 114.54546684902603 141.92374281031516 M 223.90552417298818 141.83132174419555 L 120.6047083240392 202.1770939384879 M 223.90552417298818 141.83132174419555 L 158.13627292806675 99.84583382652285 M 223.90552417298818 141.83132174419555 L 185.77767199929264 145.78268567369608 M 48.38227306657781 124.4338049696661 L 73.71019460448228 64.21965471564324 M 48.38227306657781 124.4338049696661 L 36.316211668959454 182.37288771865246 M 48.38227306657781 124.4338049696661 L 123.73476200113592 152.97671345035621 M 48.38227306657781 124.4338049696661 L 105.11458714898271 10.544788959168006 M 48.38227306657781 124.4338049696661 L 121.01305125507844 106.88076200073779 M 48.38227306657781 124.4338049696661 L 68.85388853577722 121.22570342282664 M 48.38227306657781 124.4338049696661 L 3.501882419371874 99.28958080682962 M 48.38227306657781 124.4338049696661 L 33.764933673032836 250.84285474144193 M 70.69938315004916 195.38967550821283 L 36.316211668959454 182.37288771865246 M 70.69938315004916 195.38967550821283 L 123.73476200113592 152.97671345035621 M 70.69938315004916 195.38967550821283 L 121.01305125507844 106.88076200073779 M 70.69938315004916 195.38967550821283 L 114.54546684902603 141.92374281031516 M 70.69938315004916 195.38967550821283 L 148.3884542256673 210.33481119232846 M 70.69938315004916 195.38967550821283 L 34.09103587551273 164.06217634953188 M 70.69938315004916 195.38967550821283 L 147.10101149142886 236.12170980156017 M 70.69938315004916 195.38967550821283 L 141.18605161193466 183.18435574095687 M 70.69938315004916 195.38967550821283 L 33.764933673032836 250.84285474144193 M 73.71019460448228 64.21965471564324 L 36.316211668959454 182.37288771865246 M 73.71019460448228 64.21965471564324 L 105.11458714898271 10.544788959168006 M 73.71019460448228 64.21965471564324 L 114.54546684902603 141.92374281031516 M 73.71019460448228 64.21965471564324 L 89.78297154872648 116.63881120661439 M 73.71019460448228 64.21965471564324 L 106.69790687812197 74.85301939202242 M 73.71019460448228 64.21965471564324 L 3.501882419371874 99.28958080682962 M 73.71019460448228 64.21965471564324 L 136.79211304178563 7.13031890394387 M 36.316211668959454 182.37288771865246 L 114.54546684902603 141.92374281031516 M 36.316211668959454 182.37288771865246 L 89.78297154872648 116.63881120661439 M 36.316211668959454 182.37288771865246 L 34.09103587551273 164.06217634953188 M 36.316211668959454 182.37288771865246 L 147.10101149142886 236.12170980156017 M 54.58999255499169 70.62199107082749 L 121.01305125507844 106.88076200073779 M 54.58999255499169 70.62199107082749 L 68.85388853577722 121.22570342282664 M 54.58999255499169 70.62199107082749 L 3.501882419371874 99.28958080682962 M 54.58999255499169 70.62199107082749 L 136.79211304178563 7.13031890394387 M 54.58999255499169 70.62199107082749 L 181.12976711361145 70.44164885217714 M 93.822025709877 169.435563596682 L 121.01305125507844 106.88076200073779 M 93.822025709877 169.435563596682 L 34.09103587551273 164.06217634953188 M 93.822025709877 169.435563596682 L 68.85388853577722 121.22570342282664 M 93.822025709877 169.435563596682 L 98.37480697882859 251.52363641337462 M 93.822025709877 169.435563596682 L 33.764933673032836 250.84285474144193 M 123.73476200113592 152.97671345035621 L 148.3884542256673 210.33481119232846 M 123.73476200113592 152.97671345035621 L 3.501882419371874 99.28958080682962 M 123.73476200113592 152.97671345035621 L 141.18605161193466 183.18435574095687 M 123.73476200113592 152.97671345035621 L 136.79211304178563 7.13031890394387 M 123.73476200113592 152.97671345035621 L 33.764933673032836 250.84285474144193 M 105.11458714898271 10.544788959168006 L 158.13627292806675 99.84583382652285 M 105.11458714898271 10.544788959168006 L 106.69790687812197 74.85301939202242 M 105.11458714898271 10.544788959168006 L 136.79211304178563 7.13031890394387 M 121.01305125507844 106.88076200073779 L 89.78297154872648 116.63881120661439 M 121.01305125507844 106.88076200073779 L 148.3884542256673 210.33481119232846 M 121.01305125507844 106.88076200073779 L 251.2 120.6799693449149 M 121.01305125507844 106.88076200073779 L 73.42272698626952 17.02519822586459 M 121.01305125507844 106.88076200073779 L 185.77767199929264 145.78268567369608 M 121.01305125507844 106.88076200073779 L 181.12976711361145 70.44164885217714 M 114.54546684902603 141.92374281031516 L 148.3884542256673 210.33481119232846 M 114.54546684902603 141.92374281031516 L 34.09103587551273 164.06217634953188 M 114.54546684902603 141.92374281031516 L 106.69790687812197 74.85301939202242 M 114.54546684902603 141.92374281031516 L 73.42272698626952 17.02519822586459 M 114.54546684902603 141.92374281031516 L 141.18605161193466 183.18435574095687 M 89.78297154872648 116.63881120661439 L 120.6047083240392 202.1770939384879 M 89.78297154872648 116.63881120661439 L 185.77767199929264 145.78268567369608 M 120.6047083240392 202.1770939384879 L 34.09103587551273 164.06217634953188 M 120.6047083240392 202.1770939384879 L 68.85388853577722 121.22570342282664 M 120.6047083240392 202.1770939384879 L 158.13627292806675 99.84583382652285 M 120.6047083240392 202.1770939384879 L 106.69790687812197 74.85301939202242 M 120.6047083240392 202.1770939384879 L 98.37480697882859 251.52363641337462 M 120.6047083240392 202.1770939384879 L 33.764933673032836 250.84285474144193 M 34.09103587551273 164.06217634953188 L 106.69790687812197 74.85301939202242 M 34.09103587551273 164.06217634953188 L 141.18605161193466 183.18435574095687 M 68.85388853577722 121.22570342282664 L 73.42272698626952 17.02519822586459 M 68.85388853577722 121.22570342282664 L 185.77767199929264 145.78268567369608 M 158.13627292806675 99.84583382652285 L 73.42272698626952 17.02519822586459 M 158.13627292806675 99.84583382652285 L 141.18605161193466 183.18435574095687 M 158.13627292806675 99.84583382652285 L 185.77767199929264 145.78268567369608 M 158.13627292806675 99.84583382652285 L 181.12976711361145 70.44164885217714 M 147.10101149142886 236.12170980156017 L 251.2 120.6799693449149 M 251.2 120.6799693449149 L 185.77767199929264 145.78268567369608 M 178.86780434017368 0 L 106.69790687812197 74.85301939202242 M 178.86780434017368 0 L 73.42272698626952 17.02519822586459 M 178.86780434017368 0 L 181.12976711361145 70.44164885217714 M 106.69790687812197 74.85301939202242 L 141.18605161193466 183.18435574095687 M 73.42272698626952 17.02519822586459 L 3.501882419371874 99.28958080682962 M 136.79211304178563 7.13031890394387 L 181.12976711361145 70.44164885217714 M 185.77767199929264 145.78268567369608 L 181.12976711361145 70.44164885217714" id="ac_path_7" fill="none" stroke="#93cbf9"></path></g><g data-ac-wrapper-id="25" id="ac_unmanageable-layer_9"><g></g></g></g></g><g data-ac-wrapper-id="26" id="ac_layer_4l"><g data-ac-wrapper-id="27" id="ac_layer_4k"><g data-ac-wrapper-id="28" id="ac_layer_4i"><path data-ac-wrapper-id="29" id="ac_path_c" fill="url(&quot;#ac_fill-pattern_4t&quot;)" fill-opacity="1" stroke="none" d="M 155.34737879155827 67.37025048766628 A 24 24 0 0 1 107.34737879155827 67.37025048766628 A 24 24 0 0 1 155.34737879155827 67.37025048766628"></path><path data-ac-wrapper-id="33" id="ac_path_f" fill="url(&quot;#ac_fill-pattern_4v&quot;)" fill-opacity="1" stroke="none" d="M 218.09405042999313 100.07134381249324 A 24 24 0 0 1 170.09405042999313 100.07134381249324 A 24 24 0 0 1 218.09405042999313 100.07134381249324"></path><path data-ac-wrapper-id="36" id="ac_path_i" fill="url(&quot;#ac_fill-pattern_4x&quot;)" fill-opacity="1" stroke="none" d="M 169.94671202403737 122.2545550882842 A 24 24 0 0 1 121.94671202403737 122.2545550882842 A 24 24 0 0 1 169.94671202403737 122.2545550882842"></path><path data-ac-wrapper-id="39" id="ac_path_l" fill="url(&quot;#ac_fill-pattern_4z&quot;)" fill-opacity="1" stroke="none" d="M 230.6959325365039 116.5926415271628 A 24 24 0 0 1 182.6959325365039 116.5926415271628 A 24 24 0 0 1 230.6959325365039 116.5926415271628"></path><path data-ac-wrapper-id="42" id="ac_path_o" fill="url(&quot;#ac_fill-pattern_51&quot;)" fill-opacity="1" stroke="none" d="M 197.1810737927865 178.38649605607065 A 24 24 0 0 1 149.1810737927865 178.38649605607065 A 24 24 0 0 1 197.1810737927865 178.38649605607065"></path><path data-ac-wrapper-id="45" id="ac_path_r" fill="url(&quot;#ac_fill-pattern_53&quot;)" fill-opacity="1" stroke="none" d="M 166.14246346292296 98.60332337298956 A 24 24 0 0 1 118.14246346292296 98.60332337298956 A 24 24 0 0 1 166.14246346292296 98.60332337298956"></path><path data-ac-wrapper-id="48" id="ac_path_u" fill="url(&quot;#ac_fill-pattern_55&quot;)" fill-opacity="1" stroke="none" d="M 103.23223934572904 84.77799177298863 A 24 24 0 0 1 55.23223934572904 84.77799177298863 A 24 24 0 0 1 103.23223934572904 84.77799177298863"></path><path data-ac-wrapper-id="51" id="ac_path_x" fill="url(&quot;#ac_fill-pattern_57&quot;)" fill-opacity="1" stroke="none" d="M 56.77701433593018 46.39538122774489 A 24 24 0 0 1 8.777014335930183 46.39538122774489 A 24 24 0 0 1 56.77701433593018 46.395381227744885"></path><path data-ac-wrapper-id="54" id="ac_path_10" fill="url(&quot;#ac_fill-pattern_59&quot;)" fill-opacity="1" stroke="none" d="M 118.4284718562702 212.1204037889811 A 24 24 0 0 1 70.4284718562702 212.1204037889811 A 24 24 0 0 1 118.4284718562702 212.1204037889811"></path><path data-ac-wrapper-id="57" id="ac_path_13" fill="url(&quot;#ac_fill-pattern_5b&quot;)" fill-opacity="1" stroke="none" d="M 181.72840226698474 137.52024142594144 A 24 24 0 0 1 133.72840226698474 137.52024142594144 A 24 24 0 0 1 181.72840226698474 137.52024142594144"></path><path data-ac-wrapper-id="60" id="ac_path_16" fill="url(&quot;#ac_fill-pattern_5d&quot;)" fill-opacity="1" stroke="none" d="M 264.23840563767504 190.80411783071864 A 24 24 0 0 1 216.23840563767504 190.80411783071864 A 24 24 0 0 1 264.23840563767504 190.80411783071864"></path><path data-ac-wrapper-id="63" id="ac_path_19" fill="url(&quot;#ac_fill-pattern_5f&quot;)" fill-opacity="1" stroke="none" d="M 128.28146847153909 185.5993797480583 A 24 24 0 0 1 80.28146847153909 185.5993797480583 A 24 24 0 0 1 128.28146847153909 185.5993797480583"></path><path data-ac-wrapper-id="66" id="ac_path_1c" fill="url(&quot;#ac_fill-pattern_5h&quot;)" fill-opacity="1" stroke="none" d="M 168.8875090932284 158.80366654436352 A 24 24 0 0 1 120.8875090932284 158.80366654436352 A 24 24 0 0 1 168.8875090932284 158.80366654436352"></path><path data-ac-wrapper-id="69" id="ac_path_1f" fill="url(&quot;#ac_fill-pattern_5j&quot;)" fill-opacity="1" stroke="none" d="M 243.65611790464678 65.79332959558909 A 24 24 0 0 1 195.65611790464678 65.79332959558909 A 24 24 0 0 1 243.65611790464678 65.79332959558909"></path><path data-ac-wrapper-id="72" id="ac_path_1i" fill="url(&quot;#ac_fill-pattern_5l&quot;)" fill-opacity="1" stroke="none" d="M 92.2879376677698 218.37859598747758 A 24 24 0 0 1 44.287937667769796 218.37859598747758 A 24 24 0 0 1 92.2879376677698 218.37859598747758"></path><path data-ac-wrapper-id="75" id="ac_path_1l" fill="url(&quot;#ac_fill-pattern_5n&quot;)" fill-opacity="1" stroke="none" d="M 100.43712724919743 158.5333477176671 A 24 24 0 0 1 52.43712724919743 158.5333477176671 A 24 24 0 0 1 100.43712724919743 158.5333477176671"></path><path data-ac-wrapper-id="78" id="ac_path_1o" fill="url(&quot;#ac_fill-pattern_5p&quot;)" fill-opacity="1" stroke="none" d="M 71.31130576614012 107.03129190247583 A 24 24 0 0 1 23.311305766140123 107.03129190247583 A 24 24 0 0 1 71.31130576614012 107.03129190247583"></path><path data-ac-wrapper-id="81" id="ac_path_1r" fill="url(&quot;#ac_fill-pattern_5r&quot;)" fill-opacity="1" stroke="none" d="M 24 161.39167695894741 A 24 24 0 0 1 -24 161.39167695894741 A 24 24 0 0 1 24 161.39167695894741"></path><path data-ac-wrapper-id="84" id="ac_path_1u" fill="url(&quot;#ac_fill-pattern_5t&quot;)" fill-opacity="1" stroke="none" d="M 214.52611141975737 233.43410297572817 A 24 24 0 0 1 166.52611141975737 233.43410297572817 A 24 24 0 0 1 214.52611141975737 233.43410297572817"></path><path data-ac-wrapper-id="87" id="ac_path_1x" fill="url(&quot;#ac_fill-pattern_5v&quot;)" fill-opacity="1" stroke="none" d="M 205.94296521998768 207.08075097403236 A 24 24 0 0 1 157.94296521998768 207.08075097403236 A 24 24 0 0 1 205.94296521998768 207.08075097403236"></path><path data-ac-wrapper-id="90" id="ac_path_20" fill="url(&quot;#ac_fill-pattern_5x&quot;)" fill-opacity="1" stroke="none" d="M 38.59250103916274 78.68593924396197 A 24 24 0 0 1 -9.407498960837259 78.68593924396197 A 24 24 0 0 1 38.59250103916274 78.68593924396197"></path><path data-ac-wrapper-id="93" id="ac_path_23" fill="url(&quot;#ac_fill-pattern_5z&quot;)" fill-opacity="1" stroke="none" d="M 247.90552417298818 141.83132174419555 A 24 24 0 0 1 199.90552417298818 141.83132174419555 A 24 24 0 0 1 247.90552417298818 141.83132174419555"></path><path data-ac-wrapper-id="96" id="ac_path_26" fill="url(&quot;#ac_fill-pattern_61&quot;)" fill-opacity="1" stroke="none" d="M 72.38227306657781 124.4338049696661 A 24 24 0 0 1 24.38227306657781 124.4338049696661 A 24 24 0 0 1 72.38227306657781 124.4338049696661"></path><path data-ac-wrapper-id="99" id="ac_path_29" fill="url(&quot;#ac_fill-pattern_63&quot;)" fill-opacity="1" stroke="none" d="M 94.69938315004916 195.38967550821283 A 24 24 0 0 1 46.69938315004916 195.38967550821283 A 24 24 0 0 1 94.69938315004916 195.38967550821283"></path><path data-ac-wrapper-id="102" id="ac_path_2c" fill="url(&quot;#ac_fill-pattern_65&quot;)" fill-opacity="1" stroke="none" d="M 97.71019460448228 64.21965471564324 A 24 24 0 0 1 49.71019460448228 64.21965471564324 A 24 24 0 0 1 97.71019460448228 64.21965471564324"></path><path data-ac-wrapper-id="105" id="ac_path_2f" fill="url(&quot;#ac_fill-pattern_67&quot;)" fill-opacity="1" stroke="none" d="M 60.316211668959454 182.37288771865246 A 24 24 0 0 1 12.316211668959454 182.37288771865246 A 24 24 0 0 1 60.316211668959454 182.37288771865246"></path><path data-ac-wrapper-id="108" id="ac_path_2i" fill="url(&quot;#ac_fill-pattern_69&quot;)" fill-opacity="1" stroke="none" d="M 78.58999255499168 70.62199107082749 A 24 24 0 0 1 30.58999255499168 70.62199107082749 A 24 24 0 0 1 78.58999255499168 70.62199107082749"></path><path data-ac-wrapper-id="111" id="ac_path_2l" fill="url(&quot;#ac_fill-pattern_6b&quot;)" fill-opacity="1" stroke="none" d="M 117.822025709877 169.435563596682 A 24 24 0 0 1 69.822025709877 169.435563596682 A 24 24 0 0 1 117.822025709877 169.435563596682"></path><path data-ac-wrapper-id="114" id="ac_path_2o" fill="url(&quot;#ac_fill-pattern_6d&quot;)" fill-opacity="1" stroke="none" d="M 147.73476200113592 152.97671345035621 A 24 24 0 0 1 99.73476200113592 152.97671345035621 A 24 24 0 0 1 147.73476200113592 152.97671345035621"></path><path data-ac-wrapper-id="117" id="ac_path_2r" fill="url(&quot;#ac_fill-pattern_6f&quot;)" fill-opacity="1" stroke="none" d="M 129.1145871489827 10.544788959168006 A 24 24 0 0 1 81.11458714898271 10.54478895916801 A 24 24 0 0 1 129.1145871489827 10.544788959168"></path><path data-ac-wrapper-id="120" id="ac_path_2u" fill="url(&quot;#ac_fill-pattern_6h&quot;)" fill-opacity="1" stroke="none" d="M 145.01305125507844 106.88076200073779 A 24 24 0 0 1 97.01305125507844 106.88076200073779 A 24 24 0 0 1 145.01305125507844 106.88076200073779"></path><path data-ac-wrapper-id="123" id="ac_path_2x" fill="url(&quot;#ac_fill-pattern_6j&quot;)" fill-opacity="1" stroke="none" d="M 138.545466849026 141.92374281031516 A 24 24 0 0 1 90.54546684902601 141.92374281031516 A 24 24 0 0 1 138.545466849026 141.92374281031516"></path><path data-ac-wrapper-id="126" id="ac_path_30" fill="url(&quot;#ac_fill-pattern_6l&quot;)" fill-opacity="1" stroke="none" d="M 113.78297154872648 116.63881120661439 A 24 24 0 0 1 65.78297154872648 116.63881120661439 A 24 24 0 0 1 113.78297154872648 116.63881120661439"></path><path data-ac-wrapper-id="129" id="ac_path_33" fill="url(&quot;#ac_fill-pattern_6n&quot;)" fill-opacity="1" stroke="none" d="M 172.3884542256673 210.33481119232846 A 24 24 0 0 1 124.38845422566729 210.33481119232846 A 24 24 0 0 1 172.3884542256673 210.33481119232846"></path><path data-ac-wrapper-id="132" id="ac_path_36" fill="url(&quot;#ac_fill-pattern_6p&quot;)" fill-opacity="1" stroke="none" d="M 144.6047083240392 202.1770939384879 A 24 24 0 0 1 96.6047083240392 202.1770939384879 A 24 24 0 0 1 144.6047083240392 202.1770939384879"></path><path data-ac-wrapper-id="135" id="ac_path_39" fill="url(&quot;#ac_fill-pattern_6r&quot;)" fill-opacity="1" stroke="none" d="M 58.09103587551273 164.06217634953188 A 24 24 0 0 1 10.09103587551273 164.06217634953188 A 24 24 0 0 1 58.09103587551273 164.06217634953188"></path><path data-ac-wrapper-id="138" id="ac_path_3c" fill="url(&quot;#ac_fill-pattern_6t&quot;)" fill-opacity="1" stroke="none" d="M 92.85388853577722 121.22570342282664 A 24 24 0 0 1 44.853888535777216 121.22570342282664 A 24 24 0 0 1 92.85388853577722 121.22570342282664"></path><path data-ac-wrapper-id="141" id="ac_path_3f" fill="url(&quot;#ac_fill-pattern_6v&quot;)" fill-opacity="1" stroke="none" d="M 182.13627292806675 99.84583382652285 A 24 24 0 0 1 134.13627292806675 99.84583382652285 A 24 24 0 0 1 182.13627292806675 99.84583382652285"></path><path data-ac-wrapper-id="144" id="ac_path_3i" fill="url(&quot;#ac_fill-pattern_6x&quot;)" fill-opacity="1" stroke="none" d="M 171.10101149142886 236.12170980156017 A 24 24 0 0 1 123.10101149142886 236.12170980156017 A 24 24 0 0 1 171.10101149142886 236.12170980156017"></path><path data-ac-wrapper-id="147" id="ac_path_3l" fill="url(&quot;#ac_fill-pattern_6z&quot;)" fill-opacity="1" stroke="none" d="M 275.2 120.6799693449149 A 24 24 0 0 1 227.2 120.6799693449149 A 24 24 0 0 1 275.2 120.6799693449149"></path><path data-ac-wrapper-id="150" id="ac_path_3o" fill="url(&quot;#ac_fill-pattern_71&quot;)" fill-opacity="1" stroke="none" d="M 202.86780434017368 0 A 24 24 0 0 1 154.86780434017368 2.9391523179536475e-15 A 24 24 0 0 1 202.86780434017368 -5.878304635907295e-15"></path><path data-ac-wrapper-id="153" id="ac_path_3r" fill="url(&quot;#ac_fill-pattern_73&quot;)" fill-opacity="1" stroke="none" d="M 130.69790687812196 74.85301939202242 A 24 24 0 0 1 82.69790687812196 74.85301939202242 A 24 24 0 0 1 130.69790687812196 74.85301939202242"></path><path data-ac-wrapper-id="156" id="ac_path_3u" fill="url(&quot;#ac_fill-pattern_75&quot;)" fill-opacity="1" stroke="none" d="M 97.42272698626952 17.02519822586459 A 24 24 0 0 1 49.422726986269524 17.025198225864592 A 24 24 0 0 1 97.42272698626952 17.02519822586458"></path><path data-ac-wrapper-id="159" id="ac_path_3x" fill="url(&quot;#ac_fill-pattern_77&quot;)" fill-opacity="1" stroke="none" d="M 27.501882419371874 99.28958080682962 A 24 24 0 0 1 -20.498117580628126 99.28958080682962 A 24 24 0 0 1 27.501882419371874 99.28958080682962"></path><path data-ac-wrapper-id="162" id="ac_path_40" fill="url(&quot;#ac_fill-pattern_79&quot;)" fill-opacity="1" stroke="none" d="M 165.18605161193466 183.18435574095687 A 24 24 0 0 1 117.18605161193466 183.18435574095687 A 24 24 0 0 1 165.18605161193466 183.18435574095687"></path><path data-ac-wrapper-id="165" id="ac_path_43" fill="url(&quot;#ac_fill-pattern_7b&quot;)" fill-opacity="1" stroke="none" d="M 160.79211304178563 7.13031890394387 A 24 24 0 0 1 112.79211304178563 7.130318903943873 A 24 24 0 0 1 160.79211304178563 7.130318903943864"></path><path data-ac-wrapper-id="168" id="ac_path_46" fill="url(&quot;#ac_fill-pattern_7d&quot;)" fill-opacity="1" stroke="none" d="M 209.77767199929264 145.78268567369608 A 24 24 0 0 1 161.77767199929264 145.78268567369608 A 24 24 0 0 1 209.77767199929264 145.78268567369608"></path><path data-ac-wrapper-id="171" id="ac_path_49" fill="url(&quot;#ac_fill-pattern_7f&quot;)" fill-opacity="1" stroke="none" d="M 122.37480697882859 251.52363641337462 A 24 24 0 0 1 74.37480697882859 251.52363641337462 A 24 24 0 0 1 122.37480697882859 251.52363641337462"></path><path data-ac-wrapper-id="174" id="ac_path_4c" fill="url(&quot;#ac_fill-pattern_7h&quot;)" fill-opacity="1" stroke="none" d="M 205.12976711361145 70.44164885217714 A 24 24 0 0 1 157.12976711361145 70.44164885217714 A 24 24 0 0 1 205.12976711361145 70.44164885217714"></path><path data-ac-wrapper-id="177" id="ac_path_4f" fill="url(&quot;#ac_fill-pattern_7j&quot;)" fill-opacity="1" stroke="none" d="M 57.764933673032836 250.84285474144193 A 24 24 0 0 1 9.764933673032836 250.84285474144193 A 24 24 0 0 1 57.764933673032836 250.84285474144193"></path></g><g data-ac-wrapper-id="180" id="ac_unmanageable-layer_4j"><g></g></g></g></g></g><path data-ac-wrapper-id="181" id="ac_path_4n" fill="none" stroke="black" d="M 0,0"></path><path data-ac-wrapper-id="283" id="ac_path_7l" fill="none" stroke="black" d="M 0,0"></path></g></g></g></g></svg><div class="anychart-credits"><a href="https://www.anychart.com/?utm_source=trial" title="AnyChart - JavaScript Charts designed to be embedded and integrated, v8.7.1.1930" target="_blank"><img class="anychart-credits-logo" alt="AnyChart - JavaScript Charts" src="http://static.anychart.com/logo.png"><span class="anychart-credits-text">AnyChart Trial Version</span></a></div></div></div>
+        <div style="flex: 1;font-family: gamef;color: white;background: url('ft.jpg');font-weight: bold;border-radius: 0rem 2rem 2rem 0rem;padding-top: 2rem;"> 
+            <button style="background: #000;box-shadow: 5px 5px 5px 5px  #CECAeC;font-family: 'Creepster', cursive;color: white;align-content: center;margin-left: 3rem;">
+                STACK TRACE
+            </button>
+            <div style="align-self: center;width: 100%;padding: 0.2rem;">
+                <p id="curr_state" style="font-family: gamef;color: black;font-size:0.8rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#ddffff;border-left: #DEBCDE solid 6px;font-weight: bold;">mouse:&nbsp;0&nbsp;cat:&nbsp;0&nbsp;action:&nbsp;mouse wins&nbsp;</p>
+            </div>
+            <div id="add_scripts">
+
+            <script>
+                    setTimeout(() => {   
+                        document.getElementById("curr_state").innerText = "mouse: 0, cat: 0, action: escape, mouse wins"},1000);</script><script>
+                    setTimeout(() => {   
+                        document.getElementById("curr_state").innerText = "mouse: 0, cat: 0, action: catch, mouse wins"},2000);</script><script>
+                    setTimeout(() => {   
+                        document.getElementById("curr_state").innerText = "mouse: 0, cat: 1, action: escape, mouse wins"},3000);</script><script>
+                    setTimeout(() => {   
+                        document.getElementById("curr_state").innerText = "mouse: 1, cat: 1, action: escape, cat wins"},4000);</script><script>
+                    setTimeout(() => {   
+                        document.getElementById("curr_state").innerText = "mouse: 0, cat: 1, action: catch, mouse wins"},5000);</script><script>
+                    setTimeout(() => {   
+                        document.getElementById("curr_state").innerText = "mouse: 1, cat: 1, action: catch, cat wins"},6000);</script><script>
+                    setTimeout(() => {   
+                        document.getElementById("curr_state").innerText = "mouse: 0, cat: 2, action: escape, mouse wins"},7000);</script><script>
+                    setTimeout(() => {   
+                        document.getElementById("curr_state").innerText = "mouse: 2, cat: 2, action: escape, cat wins"},8000);</script><script>
+                    setTimeout(() => {   
+                        document.getElementById("curr_state").innerText = "mouse: 0, cat: 2, action: catch, mouse wins"},9000);</script><script>
+                    setTimeout(() => {   
+                        document.getElementById("curr_state").innerText = "mouse: 2, cat: 2, action: catch, cat wins"},10000);</script><script>
+                    setTimeout(() => {   
+                        document.getElementById("curr_state").innerText = "mouse: 0, cat: 3, action: escape, mouse wins"},11000);</script><script>
+                    setTimeout(() => {   
+                        document.getElementById("curr_state").innerText = "mouse: 3, cat: 3, action: escape, cat wins"},12000);</script><script>
+                    setTimeout(() => {   
+                        document.getElementById("curr_state").innerText = "mouse: 0, cat: 3, action: catch, mouse wins"},13000);</script><script>
+                    setTimeout(() => {   
+                        document.getElementById("curr_state").innerText = "mouse: 3, cat: 3, action: catch, cat wins"},14000);</script><script>
+                    setTimeout(() => {   
+                        document.getElementById("curr_state").innerText = "mouse: 0, cat: 4, action: escape, mouse wins"},15000);</script><script>
+                    setTimeout(() => {   
+                        document.getElementById("curr_state").innerText = "mouse: 4, cat: 4, action: escape, cat wins"},16000);</script><script>
+                    setTimeout(() => {   
+                        document.getElementById("curr_state").innerText = "mouse: 0, cat: 4, action: catch, mouse wins"},17000);</script><script>
+                    setTimeout(() => {   
+                        document.getElementById("curr_state").innerText = "mouse: 4, cat: 4, action: catch, cat wins"},18000);</script><script>
+                    setTimeout(() => {   
+                        document.getElementById("curr_state").innerText = "mouse: 0, cat: 5, action: escape, mouse wins"},19000);</script><script>
+                    setTimeout(() => {   
+                        document.getElementById("curr_state").innerText = "mouse: 5, cat: 5, action: escape, cat wins"},20000);</script><script>
+                    setTimeout(() => {   
+                        document.getElementById("curr_state").innerText = "mouse: 0, cat: 5, action: catch, mouse wins"},21000);</script><script>
+                    setTimeout(() => {   
+                        document.getElementById("curr_state").innerText = "mouse: 5, cat: 5, action: catch, cat wins"},22000);</script><script>
+                    setTimeout(() => {   
+                        document.getElementById("curr_state").innerText = "mouse: 0, cat: 6, action: escape, mouse wins"},23000);</script><script>
+                    setTimeout(() => {   
+                        document.getElementById("curr_state").innerText = "mouse: 6, cat: 6, action: escape, cat wins"},24000);</script><script>
+                    setTimeout(() => {   
+                        document.getElementById("curr_state").innerText = "mouse: 0, cat: 6, action: catch, mouse wins"},25000);</script><script>
+                    setTimeout(() => {   
+                        document.getElementById("curr_state").innerText = "mouse: 6, cat: 6, action: catch, cat wins"},26000);</script><script>
+                    setTimeout(() => {   
+                        document.getElementById("curr_state").innerText = "mouse: 0, cat: 7, action: escape, mouse wins"},27000);</script><script>
+                    setTimeout(() => {   
+                        document.getElementById("curr_state").innerText = "mouse: 7, cat: 7, action: escape, cat wins"},28000);</script><script>
+                    setTimeout(() => {   
+                        document.getElementById("curr_state").innerText = "mouse: 0, cat: 7, action: catch, mouse wins"},29000);</script><script>
+                    setTimeout(() => {   
+                        document.getElementById("curr_state").innerText = "mouse: 7, cat: 7, action: catch, cat wins"},30000);</script><script>
+                    setTimeout(() => {   
+                        document.getElementById("curr_state").innerText = "mouse: 0, cat: 8, action: escape, mouse wins"},31000);</script><script>
+                    setTimeout(() => {   
+                        document.getElementById("curr_state").innerText = "mouse: 8, cat: 8, action: escape, cat wins"},32000);</script><script>
+                    setTimeout(() => {   
+                        document.getElementById("curr_state").innerText = "mouse: 0, cat: 8, action: catch, mouse wins"},33000);</script><script>
+                    setTimeout(() => {   
+                        document.getElementById("curr_state").innerText = "mouse: 8, cat: 8, action: catch, cat wins"},34000);</script><script>
+                    setTimeout(() => {   
+                        document.getElementById("curr_state").innerText = "mouse: 0, cat: 9, action: escape, mouse wins"},35000);</script><script>
+                    setTimeout(() => {   
+                        document.getElementById("curr_state").innerText = "mouse: 9, cat: 9, action: escape, cat wins"},36000);</script><script>
+                    setTimeout(() => {   
+                        document.getElementById("curr_state").innerText = "mouse: 0, cat: 9, action: catch, mouse wins"},37000);</script><script>
+                    setTimeout(() => {   
+                        document.getElementById("curr_state").innerText = "mouse: 9, cat: 9, action: catch, cat wins"},38000);</script><script>
+                    setTimeout(() => {   
+                        document.getElementById("curr_state").innerText = "mouse: 0, cat: 10, action: escape, mouse wins"},39000);</script><script>
+                    setTimeout(() => {   
+                        document.getElementById("curr_state").innerText = "mouse: 10, cat: 10, action: escape, cat wins"},40000);</script><script>
+                    setTimeout(() => {   
+                        document.getElementById("curr_state").innerText = "mouse: 0, cat: 10, action: catch, mouse wins"},41000);</script><script>
+                    setTimeout(() => {   
+                        document.getElementById("curr_state").innerText = "mouse: 10, cat: 10, action: catch, cat wins"},42000);</script><script>
+                    setTimeout(() => {   
+                        document.getElementById("curr_state").innerText = "mouse: 0, cat: 11, action: escape, mouse wins"},43000);</script><script>
+                    setTimeout(() => {   
+                        document.getElementById("curr_state").innerText = "mouse: 11, cat: 11, action: escape, cat wins"},44000);</script><script>
+                    setTimeout(() => {   
+                        document.getElementById("curr_state").innerText = "mouse: 0, cat: 11, action: catch, mouse wins"},45000);</script><script>
+                    setTimeout(() => {   
+                        document.getElementById("curr_state").innerText = "mouse: 11, cat: 11, action: catch, cat wins"},46000);</script><script>
+                    setTimeout(() => {   
+                        document.getElementById("curr_state").innerText = "mouse: 0, cat: 12, action: escape, mouse wins"},47000);</script><script>
+                    setTimeout(() => {   
+                        document.getElementById("curr_state").innerText = "mouse: 12, cat: 12, action: escape, cat wins"},48000);</script><script>
+                    setTimeout(() => {   
+                        document.getElementById("curr_state").innerText = "mouse: 0, cat: 12, action: catch, mouse wins"},49000);</script><script>
+                    setTimeout(() => {   
+                        document.getElementById("curr_state").innerText = "mouse: 12, cat: 12, action: catch, cat wins"},50000);</script><script>
+                    setTimeout(() => {   
+                        document.getElementById("curr_state").innerText = "mouse: 0, cat: 13, action: escape, mouse wins"},51000);</script><script>
+                    setTimeout(() => {   
+                        document.getElementById("curr_state").innerText = "mouse: 13, cat: 13, action: escape, cat wins"},52000);</script><script>
+                    setTimeout(() => {   
+                        document.getElementById("curr_state").innerText = "mouse: 0, cat: 13, action: catch, mouse wins"},53000);</script><script>
+                    setTimeout(() => {   
+                        document.getElementById("curr_state").innerText = "mouse: 13, cat: 13, action: catch, cat wins"},54000);</script><script>
+                    setTimeout(() => {   
+                        document.getElementById("curr_state").innerText = "mouse: 0, cat: 14, action: escape, mouse wins"},55000);</script><script>
+                    setTimeout(() => {   
+                        document.getElementById("curr_state").innerText = "mouse: 14, cat: 14, action: escape, cat wins"},56000);</script><script>
+                    setTimeout(() => {   
+                        document.getElementById("curr_state").innerText = "mouse: 0, cat: 14, action: catch, mouse wins"},57000);</script><script>
+                    setTimeout(() => {   
+                        document.getElementById("curr_state").innerText = "mouse: 14, cat: 14, action: catch, cat wins"},58000);</script><script>
+                    setTimeout(() => {   
+                        document.getElementById("curr_state").innerText = "mouse: 0, cat: 15, action: escape, mouse wins"},59000);</script><script>
+                    setTimeout(() => {   
+                        document.getElementById("curr_state").innerText = "mouse: 15, cat: 15, action: escape, cat wins"},60000);</script><script>
+                    setTimeout(() => {   
+                        document.getElementById("curr_state").innerText = "mouse: 0, cat: 15, action: catch, mouse wins"},61000);</script><script>
+                    setTimeout(() => {   
+                        document.getElementById("curr_state").innerText = "mouse: 15, cat: 15, action: catch, cat wins"},62000);</script><script>
+                    setTimeout(() => {   
+                        document.getElementById("curr_state").innerText = "mouse: 0, cat: 16, action: escape, mouse wins"},63000);</script><script>
+                    setTimeout(() => {   
+                        document.getElementById("curr_state").innerText = "mouse: 16, cat: 16, action: escape, cat wins"},64000);</script><script>
+                    setTimeout(() => {   
+                        document.getElementById("curr_state").innerText = "mouse: 0, cat: 16, action: catch, mouse wins"},65000);</script><script>
+                    setTimeout(() => {   
+                        document.getElementById("curr_state").innerText = "mouse: 16, cat: 16, action: catch, cat wins"},66000);</script><script>
+                    setTimeout(() => {   
+                        document.getElementById("curr_state").innerText = "mouse: 0, cat: 17, action: escape, mouse wins"},67000);</script><script>
+                    setTimeout(() => {   
+                        document.getElementById("curr_state").innerText = "mouse: 17, cat: 17, action: escape, cat wins"},68000);</script><script>
+                    setTimeout(() => {   
+                        document.getElementById("curr_state").innerText = "mouse: 0, cat: 17, action: catch, mouse wins"},69000);</script><script>
+                    setTimeout(() => {   
+                        document.getElementById("curr_state").innerText = "mouse: 17, cat: 17, action: catch, cat wins"},70000);</script><script>
+                    setTimeout(() => {   
+                        document.getElementById("curr_state").innerText = "mouse: 0, cat: 18, action: escape, mouse wins"},71000);</script><script>
+                    setTimeout(() => {   
+                        document.getElementById("curr_state").innerText = "mouse: 18, cat: 18, action: escape, cat wins"},72000);</script><script>
+                    setTimeout(() => {   
+                        document.getElementById("curr_state").innerText = "mouse: 0, cat: 18, action: catch, mouse wins"},73000);</script><script>
+                    setTimeout(() => {   
+                        document.getElementById("curr_state").innerText = "mouse: 18, cat: 18, action: catch, cat wins"},74000);</script><script>
+                    setTimeout(() => {   
+                        document.getElementById("curr_state").innerText = "mouse: 0, cat: 19, action: escape, mouse wins"},75000);</script><script>
+                    setTimeout(() => {   
+                        document.getElementById("curr_state").innerText = "mouse: 19, cat: 19, action: escape, cat wins"},76000);</script><script>
+                    setTimeout(() => {   
+                        document.getElementById("curr_state").innerText = "mouse: 0, cat: 19, action: catch, mouse wins"},77000);</script><script>
+                    setTimeout(() => {   
+                        document.getElementById("curr_state").innerText = "mouse: 19, cat: 19, action: catch, cat wins"},78000);</script><script>
+                    setTimeout(() => {   
+                        document.getElementById("curr_state").innerText = "mouse: 0, cat: 20, action: escape, mouse wins"},79000);</script><script>
+                    setTimeout(() => {   
+                        document.getElementById("curr_state").innerText = "mouse: 20, cat: 20, action: escape, cat wins"},80000);</script><script>
+                    setTimeout(() => {   
+                        document.getElementById("curr_state").innerText = "mouse: 0, cat: 20, action: catch, mouse wins"},81000);</script><script>
+                    setTimeout(() => {   
+                        document.getElementById("curr_state").innerText = "mouse: 20, cat: 20, action: catch, cat wins"},82000);</script><script>
+                    setTimeout(() => {   
+                        document.getElementById("curr_state").innerText = "mouse: 0, cat: 21, action: escape, mouse wins"},83000);</script><script>
+                    setTimeout(() => {   
+                        document.getElementById("curr_state").innerText = "mouse: 21, cat: 21, action: escape, cat wins"},84000);</script><script>
+                    setTimeout(() => {   
+                        document.getElementById("curr_state").innerText = "mouse: 0, cat: 21, action: catch, mouse wins"},85000);</script><script>
+                    setTimeout(() => {   
+                        document.getElementById("curr_state").innerText = "mouse: 21, cat: 21, action: catch, cat wins"},86000);</script><script>
+                    setTimeout(() => {   
+                        document.getElementById("curr_state").innerText = "mouse: 0, cat: 22, action: escape, mouse wins"},87000);</script><script>
+                    setTimeout(() => {   
+                        document.getElementById("curr_state").innerText = "mouse: 22, cat: 22, action: escape, cat wins"},88000);</script><script>
+                    setTimeout(() => {   
+                        document.getElementById("curr_state").innerText = "mouse: 0, cat: 22, action: catch, mouse wins"},89000);</script><script>
+                    setTimeout(() => {   
+                        document.getElementById("curr_state").innerText = "mouse: 22, cat: 22, action: catch, cat wins"},90000);</script><script>
+                    setTimeout(() => {   
+                        document.getElementById("curr_state").innerText = "mouse: 0, cat: 23, action: escape, mouse wins"},91000);</script><script>
+                    setTimeout(() => {   
+                        document.getElementById("curr_state").innerText = "mouse: 23, cat: 23, action: escape, cat wins"},92000);</script><script>
+                    setTimeout(() => {   
+                        document.getElementById("curr_state").innerText = "mouse: 0, cat: 23, action: catch, mouse wins"},93000);</script><script>
+                    setTimeout(() => {   
+                        document.getElementById("curr_state").innerText = "mouse: 23, cat: 23, action: catch, cat wins"},94000);</script><script>
+                    setTimeout(() => {   
+                        document.getElementById("curr_state").innerText = "mouse: 0, cat: 24, action: escape, mouse wins"},95000);</script><script>
+                    setTimeout(() => {   
+                        document.getElementById("curr_state").innerText = "mouse: 24, cat: 24, action: escape, cat wins"},96000);</script><script>
+                    setTimeout(() => {   
+                        document.getElementById("curr_state").innerText = "mouse: 0, cat: 24, action: catch, mouse wins"},97000);</script><script>
+                    setTimeout(() => {   
+                        document.getElementById("curr_state").innerText = "mouse: 24, cat: 24, action: catch, cat wins"},98000);</script><script>
+                    setTimeout(() => {   
+                        document.getElementById("curr_state").innerText = "mouse: 0, cat: 25, action: escape, mouse wins"},99000);</script><script>
+                    setTimeout(() => {   
+                        document.getElementById("curr_state").innerText = "mouse: 25, cat: 25, action: escape, cat wins"},100000);</script></div>
+            <button style="visibility: hidden;" onclick="update_msg('hi')" id="clickme">Change</button>
+            <!-- <di v id="scroll"  style="align-self: center;width: 100%;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#ddffff;border-left: #DEBCDE solid 6px;font-weight: bold;">
+                <p style="font-family: gamef;color: black;font-size:0.8rem;">mouse:&nbsp;0&nbsp;cat:&nbsp;0&nbsp;action:&nbsp;mouse wins&nbsp;</p>
+            </div> -->
+        </div>
+                
+    </div>
+    
+    <script>
+        function update_msg(params) {
+            document.getElementById("curr_state").innerText = params 
+        }
+        function update_graph() {
+            var graph_num = Math.floor(Math.random() * 12);
+            var graph_data  = {"nodes":[], "edges":[]}
+            if(position_of_mouse == 0){
+                graph_data["nodes"].push({"id":"0", "height":48, "fill": {"src":"https://kowndinya2000.github.io/cs512.github.io/jerry_goal.png"}});      
+                graph_data["nodes"].push({"id":position_of_cat.toString(), "height":48, "fill": {"src":"https://kowndinya2000.github.io/cs512.github.io/tom.png"}});          
+            } else{
+                graph_data["nodes"].push({"id":"0", "height":48, "fill": {"src":"https://kowndinya2000.github.io/cs512.github.io/goal.png"}});    
+                graph_data["nodes"].push({"id":position_of_mouse.toString(), "height":48, "fill": {"src":"https://kowndinya2000.github.io/cs512.github.io/jerry.png"}});
+                graph_data["nodes"].push({"id":position_of_cat.toString(), "height":48, "fill": {"src":"https://kowndinya2000.github.io/cs512.github.io/tom.png"}});                
+            }
+            graph_config = graphs[graph_num]
+            for(let j=1;j<graph_config.length;j++){
+                if(j!= position_of_cat && j!=position_of_mouse ){
+                    graph_data["nodes"].push({"id":j.toString(), "height":48, "fill": {"src":"https://kowndinya2000.github.io/cs512.github.io/node_g.png"}});
+                }
+            }
+            for(let i=0; i<graph_config.length; i++){
+                for(let j=0;j<graph_config[i].length;j++){
+                    graph_data["edges"].push({"from":i.toString(), "to":graph_config[i][j].toString()});
+                }
+            }
+            document.getElementById("container").innerHTML = ""
+            var chart = anychart.graph(graph_data);
+            var nodes = chart.nodes();
+
+            nodes.normal().height(48);
+            nodes.hovered().height(56);
+            nodes.selected().height(56);
+
+            nodes.normal().stroke(null);
+            nodes.hovered().stroke("#3D43BF", 3);
+            nodes.selected().stroke("#FEFDF9", 3);
+            chart.container("container").draw();
+
+        }
+        function update_graph2() {
+            var graph_data  = {"nodes":[], "edges":[]}
+            if(position_of_mouse == 0){
+                graph_data["nodes"].push({"id":"0", "height":48, "fill": {"src":"https://kowndinya2000.github.io/cs512.github.io/jerry_goal.png"}});      
+                graph_data["nodes"].push({"id":position_of_cat.toString(), "height":48, "fill": {"src":"https://kowndinya2000.github.io/cs512.github.io/tom.png"}});          
+            } else{
+                graph_data["nodes"].push({"id":"0", "height":48, "fill": {"src":"https://kowndinya2000.github.io/cs512.github.io/goal.png"}});    
+                graph_data["nodes"].push({"id":position_of_mouse.toString(), "height":48, "fill": {"src":"https://kowndinya2000.github.io/cs512.github.io/jerry.png"}});
+                graph_data["nodes"].push({"id":position_of_cat.toString(), "height":48, "fill": {"src":"https://kowndinya2000.github.io/cs512.github.io/tom.png"}});              
+            }
+            for(let j=1;j<graph_config.length;j++){
+                if(j!= position_of_cat && j!=position_of_mouse ){
+                    graph_data["nodes"].push({"id":j.toString(), "height":48, "fill": {"src":"https://kowndinya2000.github.io/cs512.github.io/node_g.png"}});
+                }
+            }
+            for(let i=0; i<graph_config.length; i++){
+                for(let j=0;j<graph_config[i].length;j++){
+                    graph_data["edges"].push({"from":i.toString(), "to":graph_config[i][j].toString()});
+                }
+            }
+            document.getElementById("container").innerHTML = ""
+            var chart = anychart.graph(graph_data);
+            var nodes = chart.nodes();
+
+            nodes.normal().height(48);
+            nodes.hovered().height(56);
+            nodes.selected().height(56);
+
+            nodes.normal().stroke(null);
+            nodes.hovered().stroke("#3D43BF", 3);
+            nodes.selected().stroke("#FEFDF9", 3);
+            chart.container("container").draw();
+
+        }
+        // setInterval(() => {
+        //     document.getElementById("scroll").innerHTML = scroll_content
+        //     update_graph()
+        // }, 50);
+       
+        // setTimeout(() => {   
+        //                 document.getElementById("curr_state").innerText = 0&nbsp;0, &nbsp;0&nbsp;0&nbsp;action:&nbsp;escape&nbsp;mouse wins},1000);
+
+
+        // setTimeout(() => {   
+        //                 document.getElementById("curr_state").innerText = "mouse: hey this is , cat: 1 action: escape mouse wins"},3000);
+        function run_minimax() {
+            var game_result = minimax(graph_config)
+            var temp = ""
+            for(let i=0;i<100;i++){
+                let {jerry_pos, tom_pos, action, player_won} = decode_snapshot(stack_trace_bag[i])
+                
+                document.getElementById("add_scripts").innerHTML += 
+                "<script>" + `
+                    setTimeout(() => {   
+                        document.getElementById("curr_state").innerText = "mouse: `+ jerry_pos.toString() + `, cat: ` + tom_pos.toString() + `, action: ` + action + `, ` + player_won + '"'  +
+                    `},` + (i+1)*1000 + `);` + "<\/script>"     
+            }
+            // document.getElementById("add_scripts").innerHTML += `
+            //     <script>
+            //         setTimeout(() => {   
+            //             document.getElementById("curr_state").innerText = "` + game_result  +
+            //         `"}, ` + (101)*1000 + `);
+            //     <\/script>
+            //     `
+            
+            // document.getElementById("scroll").innerHTML = 
+            
+        // console.log(minimax(graph_config))
+            
+        // document.getElementById("scroll").innerText = minimax(graph_config)   
+
+        }
+    </script>
+    
+    <script>
+        var graph_data  = {"nodes":[], "edges":[]}
+        graph_data["nodes"].push({"id":"0", "height":48, "fill": {"src":"https://kowndinya2000.github.io/cs512.github.io/goal.png"}});
+        graph_data["nodes"].push({"id":"1", "height":48, "fill": {"src":"https://kowndinya2000.github.io/cs512.github.io/jerry.png"}});
+        graph_data["nodes"].push({"id":"2", "height":48, "fill": {"src":"https://kowndinya2000.github.io/cs512.github.io/tom.png"}});
+        
+        for(let i=3; i<graph_config.length; i++){
+            graph_data["nodes"].push({"id":i.toString(), "height":48, "fill": {"src":"https://kowndinya2000.github.io/cs512.github.io/node_g.png"}});
+        }
+        for(let i=0; i<graph_config.length; i++){
+            for(let j=0;j<graph_config[i].length;j++){
+                graph_data["edges"].push({"from":i.toString(), "to":graph_config[i][j].toString()});
+            }
+        }
+        anychart.onDocumentReady(function () {
+        // create chart from loaded data
+        // console.log(graph_data)
+        var chart = anychart.graph(graph_data);
+        // set title
+            // access nodes
+            var nodes = chart.nodes();
+
+            // set the size of nodes
+            nodes.normal().height(48);
+            nodes.hovered().height(56);
+            nodes.selected().height(56);
+
+            // set the stroke of nodes
+            nodes.normal().stroke(null);
+            nodes.hovered().stroke("#3D43BF", 3);
+            nodes.selected().stroke("#FEFDF9", 3);
+        // draw chart
+        chart.container("container").draw();
+        });
+        
+    </script>
+
+
+<svg width="0" height="0" style="position: absolute; left: -99999px; top: -99999px;"><text></text><defs></defs><g></g><g></g><g></g></svg></body>
+</html>

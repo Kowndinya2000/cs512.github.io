@@ -1,0 +1,2135 @@
+
+            <!DOCTYPE html>
+            <html>
+
+            <head>
+                <script src="https://cdn.anychart.com/releases/8.7.1/js/anychart-core.min.js"></script>
+                <script src="https://cdn.anychart.com/releases/8.7.1/js/anychart-graph.min.js"></script>
+                <script src="https://cdn.anychart.com/releases/8.7.1/js/anychart-data-adapter.min.js"></script>
+                <style type="text/css">
+                    #container {
+                        width: 100%;
+                        height: 100%;
+                        margin: 0;
+                        padding: 0;
+                    }
+                    @font-face {
+                        font-family: gamef;
+                        src: url("https://kowndinya2000.github.io/cs512.github.io/Orbitron-SemiBold.ttf");
+                    }
+                    @import url('https://fonts.googleapis.com/css2?family=Creepster&display=swap');
+                </style>
+            <script>
+               function goHome() {
+                   document.getElementById("gohome").click()
+               }
+           </script>    
+       </head>
+
+           <body style="background-image: url('https://kowndinya2000.github.io/cs512.github.io/f5.jpg');background-position: center;background-size: cover;background-repeat: no-repeat;padding: 2rem;">
+               <a href="/home" id="gohome" style="display:none;">Home</a>
+               <button onclick="goHome()" style="background: #1F2335;border-radius: 2rem;width: 8rem;height: 2rem;color: #5c86ff;font-family: gamef;position: absolute;">
+                   Home
+               </button>
+                <!-- <button onclick="update_graph()" style="background: #1F2335;border-radius: 2rem;width: 8rem;height: 2rem;color: #E34C26;font-family: gamef;position: absolute;margin-top: 5rem;">
+                    Change graph
+                </button> -->
+                <div class="editor-block" style="position:absolute;margin-left:60rem;margin-top:25rem;display: block;width: 500px;height: 400px;background: linear-gradient(109.61deg, #4C4F5A 4.26%, #202125 84.84%);border-radius: 10px;background: #C5C8D4;visibility:hidden">
+                <div style="height: 2rem;display: flex;width: 100%;padding: 0.2rem 1rem 0.2rem 1rem;">
+                    <div style="flex:5;">
+                        <h1 style="  font-family: Lato, sans-serif;
+                        font-weight: 900;
+                        font-size: 14px;
+                        letter-spacing: 1.57px;
+                        color: #000;
+                        margin: 0;">Corresponding Alogrithm Snippets</h1>
+                    </div>
+                    <div style="flex: 1;align-items: flex-end;">
+                        <svg width="16" height="8" viewBox="0 0 16 8" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-left:1rem"><path d="M8.7089 7.65105L14.8704 2.02908C15.1112 1.80937 15.2528 1.51212 15.2528 1.18902C15.2528 0.865913 15.1112 0.56866 14.8704 0.348951C14.6296 0.129241 14.3038 0 13.9497 0C13.5956 0 13.2698 0.129241 13.029 0.348951L7.75989 5.1567L2.49077 0.348951C2.24998 0.129241 1.9242 0 1.57009 0C1.21598 0 0.890202 0.129241 0.649409 0.336026C0.380287 0.568659 0.252808 0.878837 0.252808 1.18902C0.252808 1.48627 0.380286 1.78352 0.621079 2.02908C2.23581 3.51535 6.42844 7.3538 6.71173 7.6252L6.74006 7.65105C7.24998 8.11632 8.19898 8.11632 8.7089 7.65105Z" fill="#4C4F5A"/></svg>
+                    </div>
+                
+                </div>
+                <div>
+                    
+                </div>
+                </div>
+                <img src="https://kowndinya2000.github.io/cs512.github.io/tj.jpg" alt="" style="position: absolute;margin-left: 10rem;margin-right: auto;border-radius: 2rem;z-index: 2;margin-top: -1rem;width: 20rem;height: 12rem;">
+               <div style="position: absolute;margin-left: 32rem;margin-right: auto;border-radius: 2rem;z-index: 2;margin-top: 1rem;width: 30rem;padding: 0.5rem 1rem;background: #C5C8D4;align-content: center;align-self: auto;align-items: center;background:#000;color:#fff;font-family:gamef;" id="top_info">
+                   Percolating the graph using a bottom up strategy
+                    
+                </div>
+                <div style="display: flex;flex-direction: row;height: 40rem;width: 70%;align-items: stretch;margin-top: 8.5rem;border-radius: 2rem;">
+                    <div id="container" style="flex:3;border-radius: 2rem;"></div>
+                    <div style="flex: 1.5;font-family: gamef;color: white;background: url('https://kowndinya2000.github.io/cs512.github.io/ft.jpg');font-weight: bold;border-radius: 0rem 2rem 2rem 0rem;padding-top: 2rem;"> 
+                        <button style="background: #000;box-shadow: 5px 5px 5px 5px  #CECAeC;font-family: 'Creepster', cursive;color: white;align-content: center;margin-left: 3rem;">
+                            TOP OF THE PERCOLATION QUEUE 
+                        </button>
+                        <div  style="align-self: center;width: 100%;padding: 0.2rem;">
+                            <p id="curr_state" style="font-family: gamef;color: black;font-size:0.8rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#ddffff;border-left: #DEBCDE solid 6px;font-weight: bold;">mouse:&nbsp;0&nbsp;cat:&nbsp;0&nbsp;action:&nbsp;mouse wins&nbsp;</p>
+                             <button style="background: #000;box-shadow: 5px 5px 5px 5px  #CECAeC;font-family: 'Creepster', cursive;color: white;align-content: center;margin-left: 3rem;">
+                                ENTIRE PERCOLATION QUEUE 
+                            </button>
+                            <marquee scrollamount="5" behavior="scroll" direction="up" id="full_stack" style="padding:0.5rem;height:30rem;overflow:scroll;margin-top: 1rem;"></marquee>
+                        </div>
+                        <div id="add_scripts">
+
+                        </div>
+                        <button style="visibility: hidden;" onclick="update_msg('hi')" id="clickme">Change</button>
+                    </div>
+                            
+                </div>
+                
+                <script>
+                        var graphs = [
+                        [[2,3],[2],[0,1],[0,4],[3]],
+                        [[2,3],[3,4],[0,4],[0,1],[1,2]],
+                        [[2,3],[2,3,4],[0,1],[0,1,4],[1,3]],
+                        [[1,4],[0,2,5,6],[1,7],[5,7,8],[0,7,9],[1,3,9],[1],[2,3,4,9],[3],[4,5,7]],
+                        [[3],[12,13,14],[8,9,10,11],[0,5,6,11,13,14],[8,9,12],[3,9,10,14],[3],[8,9],[2,4,7,9],[2,4,5,7,8,11],[2,5,13],[2,3,9,12],[1,4,11,13],[1,3,10,12,14],[1,3,5,13]],
+                        [[3],[2,6,8,9],[1,4,5,9,11],[0,4,6,7,8],[2,3,10],[2,6,9,11],[1,3,5,8,11],[3,10,11],[1,3,6],[1,2,5],[4,7,11],[2,5,6,7,10]],
+                        [[3],[2,5,6,12],[1,3,8,9,12],[0,2,4,5,8,11,13],[3,7,8,11,13],[1,3,6,8,10],[1,5,7,10],[4,6,10],[2,3,4,5],[2,12,13],[5,6,7,11],[3,4,10,13],[1,2,9],[3,4,9,11]],
+                        [[3],[2,5,6],[1,4,7,8],[0,4,5,6],[2,3,8],[1,3,6],[1,3,5,7,8],[2,6,8],[2,4,6,7]],
+                        [[6],[4],[9],[5],[1,5],[3,4,6],[0,5,10],[8,9,10],[7],[2,7],[6,7]],
+                        [[2,9,14],[2,5,7],[0,1,3,8,9,11,14],[2,12],[5,11,18],[1,4,18],[9,17,19],[1,11,12,13,14,17,19],[2,16,17],[0,2,6,12,14,18],[14],[2,4,7],[3,7,9,13],[7,12,14],[0,2,7,9,10,13,17],[18],[8,19],[6,7,8,14,19],[4,5,9,15],[6,7,16,17]],
+                        [[3,4,6,7,9,15,16,18],[4,5,8,19],[3,4,6,9,17,18],[0,2,11,15],[0,1,10,6,2,12,14,16],[1,10,7,9,15,17,18],[0,10,4,7,9,2,11,12,13,14,15,17,19],[0,10,5,6,9,16,17],[1,9,14,15,16,19],[0,10,5,6,7,8,2,11,13,15,16,17,18],[4,5,6,7,9,18],[3,6,9,12,19],[4,6,11,15,17,19],[6,9,15,17,18,19],[4,6,8,15,19],[0,3,5,6,8,9,12,13,14,16,19],[0,4,7,8,9,15,17,18,19],[5,6,7,9,2,12,13,16],[0,10,5,9,2,13,16],[1,6,8,11,12,13,14,15,16]],
+                        [[1,4,5,7,9,16,27,29,30,36,39,43,45],[0,2,4,11,12,13,18,29,31,45],[1,6,8,13,15,18,20,21,24,27,30,32,40,44],[4,5,9,13,19,24,30,37,38,39,41,46],[0,1,3,14,27,28,30,33,44,47],[0,3,7,9,19,21,27,29,30,32,33,35],[2,7,12,13,17,22,23,26,41,45],[0,5,6,17,20,22,24,28,29,36],[2,9,11,12,14,15,18,26,27,36,47,49],[0,3,5,8,10,11,13,22,25,27,33,36,39,40],[9,28,38,44,46,48],[1,8,9,12,15,20,22,25,33,38,46,47],[1,6,8,11,21,22,23,27,32,44,46,48],[1,2,3,6,9,21,28,37,48],[4,8,17,19,23,36,37,43,44,49],[2,8,11,24,26,33,37,43,46,47],[0,20,27,32,36,41,47,48],[6,7,14,20,25,27,38],[1,2,8,19,31,33,34,38],[3,5,14,18,27,28,33,38,47,48],[2,7,11,16,17,26,30,41,42,43],[2,5,12,13,31,34,37,46],[6,7,9,11,12,24,25,28,29,30,36,43,49],[6,12,14,25,28,30,31,33,35,38,44,49],[2,3,7,15,22,25,29,31,32,41,43,45],[9,11,17,22,23,24,31,32,35,38],[6,8,15,20,30,36,43,45,48],[0,2,4,5,8,9,12,16,17,19,30,35,36,47,49],[4,7,10,13,19,22,23,33,43,44,45,49],[0,1,5,7,22,24,37,41,45],[0,2,3,4,5,20,22,23,26,27,32,33,39,42,46,48],[1,18,21,23,24,25,33,35,41,42,44],[2,5,12,16,24,25,30,34,46],[4,5,9,11,15,18,19,23,28,30,31],[18,21,32,35,36,37,41,47,49],[5,23,25,27,31,34,41,44],[0,7,8,9,14,16,22,26,27,34,42,46],[3,13,14,15,21,29,34,42,44,46,48],[3,10,11,17,18,19,23,25,39],[0,3,9,30,38,46],[2,9,41,42,48],[3,6,16,20,24,29,31,34,35,40,44],[20,30,31,36,37,40,43],[0,14,15,20,22,24,26,28,42],[2,4,10,12,14,23,28,31,35,37,41],[0,1,6,24,26,28,29,48],[3,10,11,12,15,21,30,32,36,37,39,48],[4,8,11,15,16,19,27,34],[10,12,13,16,19,26,30,37,40,45,46],[8,14,22,23,27,28,34]]
+                    ]
+        var scroll_content = `<p style="font-family: gamef;color: white;font-size:small;background:#2E66C7;box-shadow: 1px 2px 2px 1px #fff9f4">BFS Search is displayed here</p>`
+        var position_of_cat = 2
+        var position_of_mouse = 1 
+        var graph_config = [[3],[2,5,6],[1,4,7,8],[0,4,5,6],[2,3,8],[1,3,6],[1,3,5,7,8],[2,6,8],[2,4,6,7]]
+        var stack_trace_bag = []
+
+                    function update_msg(params) {
+                        document.getElementById("curr_state").innerText = params 
+                    }
+                    function update_graph() {
+                        var graph_num = Math.floor(Math.random() * 12);
+                        var graph_data  = {"nodes":[], "edges":[]}
+                        if(position_of_mouse == 0){
+                            graph_data["nodes"].push({"id":"0", "height":48, "fill": {"src":"https://kowndinya2000.github.io/cs512.github.io/jerry_goal.png"}});      
+                            graph_data["nodes"].push({"id":position_of_cat.toString(), "height":48, "fill": {"src":"https://kowndinya2000.github.io/cs512.github.io/tom.png"}});          
+                        } else{
+                            graph_data["nodes"].push({"id":"0", "height":48, "fill": {"src":"https://kowndinya2000.github.io/cs512.github.io/goal.png"}});    
+                            graph_data["nodes"].push({"id":position_of_mouse.toString(), "height":48, "fill": {"src":"https://kowndinya2000.github.io/cs512.github.io/jerry.png"}});
+                            graph_data["nodes"].push({"id":position_of_cat.toString(), "height":48, "fill": {"src":"https://kowndinya2000.github.io/cs512.github.io/tom.png"}});                
+                        }
+                        graph_config = graphs[graph_num]
+                        for(let j=1;j<graph_config.length;j++){
+                            if(j!= position_of_cat && j!=position_of_mouse ){
+                                graph_data["nodes"].push({"id":j.toString(), "height":48, "fill": {"src":"https://kowndinya2000.github.io/cs512.github.io/node_g.png"}});
+                            }
+                        }
+                        for(let i=0; i<graph_config.length; i++){
+                            for(let j=0;j<graph_config[i].length;j++){
+                                graph_data["edges"].push({"from":i.toString(), "to":graph_config[i][j].toString()});
+                            }
+                        }
+                        document.getElementById("container").innerHTML = ""
+                        var chart = anychart.graph(graph_data);
+                        var nodes = chart.nodes();
+
+                        nodes.normal().height(48);
+                        nodes.hovered().height(56);
+                        nodes.selected().height(56);
+
+                        nodes.normal().stroke(null);
+                        nodes.hovered().stroke("#3D43BF", 3);
+                        nodes.selected().stroke("#FEFDF9", 3);
+                        chart.container("container").draw();
+
+                    }
+                    function update_graph2() {
+                        var graph_data  = {"nodes":[], "edges":[]}
+                        if(position_of_mouse == 0){
+                            graph_data["nodes"].push({"id":"0", "height":48, "fill": {"src":"https://kowndinya2000.github.io/cs512.github.io/jerry_goal.png"}});      
+                            graph_data["nodes"].push({"id":position_of_cat.toString(), "height":48, "fill": {"src":"https://kowndinya2000.github.io/cs512.github.io/tom.png"}});          
+                        } else{
+                            graph_data["nodes"].push({"id":"0", "height":48, "fill": {"src":"https://kowndinya2000.github.io/cs512.github.io/goal.png"}});    
+                            graph_data["nodes"].push({"id":position_of_mouse.toString(), "height":48, "fill": {"src":"https://kowndinya2000.github.io/cs512.github.io/jerry.png"}});
+                            graph_data["nodes"].push({"id":position_of_cat.toString(), "height":48, "fill": {"src":"https://kowndinya2000.github.io/cs512.github.io/tom.png"}});              
+                        }
+                        for(let j=1;j<graph_config.length;j++){
+                            if(j!= position_of_cat && j!=position_of_mouse ){
+                                graph_data["nodes"].push({"id":j.toString(), "height":48, "fill": {"src":"https://kowndinya2000.github.io/cs512.github.io/node_g.png"}});
+                            }
+                        }
+                        for(let i=0; i<graph_config.length; i++){
+                            for(let j=0;j<graph_config[i].length;j++){
+                                graph_data["edges"].push({"from":i.toString(), "to":graph_config[i][j].toString()});
+                            }
+                        }
+                        document.getElementById("container").innerHTML = ""
+                        var chart = anychart.graph(graph_data);
+                        var nodes = chart.nodes();
+
+                        nodes.normal().height(48);
+                        nodes.hovered().height(56);
+                        nodes.selected().height(56);
+
+                        nodes.normal().stroke(null);
+                        nodes.hovered().stroke("#3D43BF", 3);
+                        nodes.selected().stroke("#FEFDF9", 3);
+                        chart.container("container").draw();
+
+                    }
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse:0 Cat:0 Action: catch Winner: Mouse </p>' 
+document.getElementById('top_info').innerHTML = "Immediate Coloring - Enqueing nodes that are colored..."
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse:0 Cat:0 Action: catch Winner: Mouse"
+                    position_of_cat = 0
+
+                     position_of_mouse = 0
+
+                     update_graph2()
+                     }, + 700);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse:0 Cat:0 Action: escape Winner: Mouse </p>' 
+document.getElementById('top_info').innerHTML = "Immediate Coloring - Enqueing nodes that are colored..."
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse:0 Cat:0 Action: escape Winner: Mouse"
+                    position_of_cat = 0
+
+                     position_of_mouse = 0
+
+                     update_graph2()
+                     }, + 1400);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse:0 Cat:1 Action: catch Winner: Mouse </p>' 
+document.getElementById('top_info').innerHTML = "Immediate Coloring - Enqueing nodes that are colored..."
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse:0 Cat:1 Action: catch Winner: Mouse"
+                    position_of_cat = 1
+
+                     position_of_mouse = 0
+
+                     update_graph2()
+                     }, + 2100);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse: 1 Cat: 1 Action: catch Winner: Cat </p>' 
+document.getElementById('top_info').innerHTML = "Eventual Coloring - Enqueing nodes that are colored..."
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse: 1 Cat: 1 Action: catch Winner: Cat"
+                    position_of_cat = 1
+
+                     position_of_mouse = 1
+
+                     update_graph2()
+                     }, + 2800);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse:0 Cat:1 Action: escape Winner: Mouse </p>' 
+document.getElementById('top_info').innerHTML = "Immediate Coloring - Enqueing nodes that are colored..."
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse:0 Cat:1 Action: escape Winner: Mouse"
+                    position_of_cat = 1
+
+                     position_of_mouse = 0
+
+                     update_graph2()
+                     }, + 3500);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse: 1 Cat: 1 Action: escape Winner: Cat </p>' 
+document.getElementById('top_info').innerHTML = "Eventual Coloring - Enqueing nodes that are colored..."
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse: 1 Cat: 1 Action: escape Winner: Cat"
+                    position_of_cat = 1
+
+                     position_of_mouse = 1
+
+                     update_graph2()
+                     }, + 4200);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse:0 Cat:2 Action: catch Winner: Mouse </p>' 
+document.getElementById('top_info').innerHTML = "Immediate Coloring - Enqueing nodes that are colored..."
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse:0 Cat:2 Action: catch Winner: Mouse"
+                    position_of_cat = 2
+
+                     position_of_mouse = 0
+
+                     update_graph2()
+                     }, + 4900);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse: 2 Cat: 2 Action: catch Winner: Cat </p>' 
+document.getElementById('top_info').innerHTML = "Eventual Coloring - Enqueing nodes that are colored..."
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse: 2 Cat: 2 Action: catch Winner: Cat"
+                    position_of_cat = 2
+
+                     position_of_mouse = 2
+
+                     update_graph2()
+                     }, + 5600);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse:0 Cat:2 Action: escape Winner: Mouse </p>' 
+document.getElementById('top_info').innerHTML = "Immediate Coloring - Enqueing nodes that are colored..."
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse:0 Cat:2 Action: escape Winner: Mouse"
+                    position_of_cat = 2
+
+                     position_of_mouse = 0
+
+                     update_graph2()
+                     }, + 6300);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse: 2 Cat: 2 Action: escape Winner: Cat </p>' 
+document.getElementById('top_info').innerHTML = "Eventual Coloring - Enqueing nodes that are colored..."
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse: 2 Cat: 2 Action: escape Winner: Cat"
+                    position_of_cat = 2
+
+                     position_of_mouse = 2
+
+                     update_graph2()
+                     }, + 7000);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse:0 Cat:3 Action: catch Winner: Mouse </p>' 
+document.getElementById('top_info').innerHTML = "Immediate Coloring - Enqueing nodes that are colored..."
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse:0 Cat:3 Action: catch Winner: Mouse"
+                    position_of_cat = 3
+
+                     position_of_mouse = 0
+
+                     update_graph2()
+                     }, + 7700);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse: 3 Cat: 3 Action: catch Winner: Cat </p>' 
+document.getElementById('top_info').innerHTML = "Eventual Coloring - Enqueing nodes that are colored..."
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse: 3 Cat: 3 Action: catch Winner: Cat"
+                    position_of_cat = 3
+
+                     position_of_mouse = 3
+
+                     update_graph2()
+                     }, + 8400);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse:0 Cat:3 Action: escape Winner: Mouse </p>' 
+document.getElementById('top_info').innerHTML = "Immediate Coloring - Enqueing nodes that are colored..."
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse:0 Cat:3 Action: escape Winner: Mouse"
+                    position_of_cat = 3
+
+                     position_of_mouse = 0
+
+                     update_graph2()
+                     }, + 9100);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse: 3 Cat: 3 Action: escape Winner: Cat </p>' 
+document.getElementById('top_info').innerHTML = "Eventual Coloring - Enqueing nodes that are colored..."
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse: 3 Cat: 3 Action: escape Winner: Cat"
+                    position_of_cat = 3
+
+                     position_of_mouse = 3
+
+                     update_graph2()
+                     }, + 9800);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse:0 Cat:4 Action: catch Winner: Mouse </p>' 
+document.getElementById('top_info').innerHTML = "Immediate Coloring - Enqueing nodes that are colored..."
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse:0 Cat:4 Action: catch Winner: Mouse"
+                    position_of_cat = 4
+
+                     position_of_mouse = 0
+
+                     update_graph2()
+                     }, + 10500);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse: 4 Cat: 4 Action: catch Winner: Cat </p>' 
+document.getElementById('top_info').innerHTML = "Eventual Coloring - Enqueing nodes that are colored..."
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse: 4 Cat: 4 Action: catch Winner: Cat"
+                    position_of_cat = 4
+
+                     position_of_mouse = 4
+
+                     update_graph2()
+                     }, + 11200);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse:0 Cat:4 Action: escape Winner: Mouse </p>' 
+document.getElementById('top_info').innerHTML = "Immediate Coloring - Enqueing nodes that are colored..."
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse:0 Cat:4 Action: escape Winner: Mouse"
+                    position_of_cat = 4
+
+                     position_of_mouse = 0
+
+                     update_graph2()
+                     }, + 11900);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse: 4 Cat: 4 Action: escape Winner: Cat </p>' 
+document.getElementById('top_info').innerHTML = "Eventual Coloring - Enqueing nodes that are colored..."
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse: 4 Cat: 4 Action: escape Winner: Cat"
+                    position_of_cat = 4
+
+                     position_of_mouse = 4
+
+                     update_graph2()
+                     }, + 12600);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse:0 Cat:5 Action: catch Winner: Mouse </p>' 
+document.getElementById('top_info').innerHTML = "Immediate Coloring - Enqueing nodes that are colored..."
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse:0 Cat:5 Action: catch Winner: Mouse"
+                    position_of_cat = 5
+
+                     position_of_mouse = 0
+
+                     update_graph2()
+                     }, + 13300);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse: 5 Cat: 5 Action: catch Winner: Cat </p>' 
+document.getElementById('top_info').innerHTML = "Eventual Coloring - Enqueing nodes that are colored..."
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse: 5 Cat: 5 Action: catch Winner: Cat"
+                    position_of_cat = 5
+
+                     position_of_mouse = 5
+
+                     update_graph2()
+                     }, + 14000);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse:0 Cat:5 Action: escape Winner: Mouse </p>' 
+document.getElementById('top_info').innerHTML = "Immediate Coloring - Enqueing nodes that are colored..."
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse:0 Cat:5 Action: escape Winner: Mouse"
+                    position_of_cat = 5
+
+                     position_of_mouse = 0
+
+                     update_graph2()
+                     }, + 14700);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse: 5 Cat: 5 Action: escape Winner: Cat </p>' 
+document.getElementById('top_info').innerHTML = "Eventual Coloring - Enqueing nodes that are colored..."
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse: 5 Cat: 5 Action: escape Winner: Cat"
+                    position_of_cat = 5
+
+                     position_of_mouse = 5
+
+                     update_graph2()
+                     }, + 15400);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse:0 Cat:6 Action: catch Winner: Mouse </p>' 
+document.getElementById('top_info').innerHTML = "Immediate Coloring - Enqueing nodes that are colored..."
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse:0 Cat:6 Action: catch Winner: Mouse"
+                    position_of_cat = 6
+
+                     position_of_mouse = 0
+
+                     update_graph2()
+                     }, + 16100);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse: 6 Cat: 6 Action: catch Winner: Cat </p>' 
+document.getElementById('top_info').innerHTML = "Eventual Coloring - Enqueing nodes that are colored..."
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse: 6 Cat: 6 Action: catch Winner: Cat"
+                    position_of_cat = 6
+
+                     position_of_mouse = 6
+
+                     update_graph2()
+                     }, + 16800);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse:0 Cat:6 Action: escape Winner: Mouse </p>' 
+document.getElementById('top_info').innerHTML = "Immediate Coloring - Enqueing nodes that are colored..."
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse:0 Cat:6 Action: escape Winner: Mouse"
+                    position_of_cat = 6
+
+                     position_of_mouse = 0
+
+                     update_graph2()
+                     }, + 17500);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse: 6 Cat: 6 Action: escape Winner: Cat </p>' 
+document.getElementById('top_info').innerHTML = "Eventual Coloring - Enqueing nodes that are colored..."
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse: 6 Cat: 6 Action: escape Winner: Cat"
+                    position_of_cat = 6
+
+                     position_of_mouse = 6
+
+                     update_graph2()
+                     }, + 18200);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse:0 Cat:7 Action: catch Winner: Mouse </p>' 
+document.getElementById('top_info').innerHTML = "Immediate Coloring - Enqueing nodes that are colored..."
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse:0 Cat:7 Action: catch Winner: Mouse"
+                    position_of_cat = 7
+
+                     position_of_mouse = 0
+
+                     update_graph2()
+                     }, + 18900);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse: 7 Cat: 7 Action: catch Winner: Cat </p>' 
+document.getElementById('top_info').innerHTML = "Eventual Coloring - Enqueing nodes that are colored..."
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse: 7 Cat: 7 Action: catch Winner: Cat"
+                    position_of_cat = 7
+
+                     position_of_mouse = 7
+
+                     update_graph2()
+                     }, + 19600);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse:0 Cat:7 Action: escape Winner: Mouse </p>' 
+document.getElementById('top_info').innerHTML = "Immediate Coloring - Enqueing nodes that are colored..."
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse:0 Cat:7 Action: escape Winner: Mouse"
+                    position_of_cat = 7
+
+                     position_of_mouse = 0
+
+                     update_graph2()
+                     }, + 20300);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse: 7 Cat: 7 Action: escape Winner: Cat </p>' 
+document.getElementById('top_info').innerHTML = "Eventual Coloring - Enqueing nodes that are colored..."
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse: 7 Cat: 7 Action: escape Winner: Cat"
+                    position_of_cat = 7
+
+                     position_of_mouse = 7
+
+                     update_graph2()
+                     }, + 21000);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse:0 Cat:8 Action: catch Winner: Mouse </p>' 
+document.getElementById('top_info').innerHTML = "Immediate Coloring - Enqueing nodes that are colored..."
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse:0 Cat:8 Action: catch Winner: Mouse"
+                    position_of_cat = 8
+
+                     position_of_mouse = 0
+
+                     update_graph2()
+                     }, + 21700);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse: 8 Cat: 8 Action: catch Winner: Cat </p>' 
+document.getElementById('top_info').innerHTML = "Eventual Coloring - Enqueing nodes that are colored..."
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse: 8 Cat: 8 Action: catch Winner: Cat"
+                    position_of_cat = 8
+
+                     position_of_mouse = 8
+
+                     update_graph2()
+                     }, + 22400);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse:0 Cat:8 Action: escape Winner: Mouse </p>' 
+document.getElementById('top_info').innerHTML = "Immediate Coloring - Enqueing nodes that are colored..."
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse:0 Cat:8 Action: escape Winner: Mouse"
+                    position_of_cat = 8
+
+                     position_of_mouse = 0
+
+                     update_graph2()
+                     }, + 23100);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse: 8 Cat: 8 Action: escape Winner: Cat </p>' 
+document.getElementById('top_info').innerHTML = "Eventual Coloring - Enqueing nodes that are colored..."
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse: 8 Cat: 8 Action: escape Winner: Cat"
+                    position_of_cat = 8
+
+                     position_of_mouse = 8
+
+                     update_graph2()
+                     }, + 23800);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse: 3 Cat: 0 Action: catch Winner: Cat </p>' 
+document.getElementById('top_info').innerHTML = "Cat's Parent Node making a winning move..."
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse: 3 Cat: 0 Action: catch Winner: Cat"
+                    position_of_cat = 0
+
+                     position_of_mouse = 3
+
+                     update_graph2()
+                     }, + 24500);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse: 1 Cat: 2 Action: escape Winner: Cat </p>' 
+document.getElementById('top_info').innerHTML = "Mouse's Parent Node making a winning move..."
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse: 1 Cat: 2 Action: escape Winner: Cat"
+                    position_of_cat = 2
+
+                     position_of_mouse = 1
+
+                     update_graph2()
+                     }, + 25200);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse: 1 Cat: 5 Action: escape Winner: Cat </p>' 
+document.getElementById('top_info').innerHTML = "Mouse's Parent Node making a winning move..."
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse: 1 Cat: 5 Action: escape Winner: Cat"
+                    position_of_cat = 5
+
+                     position_of_mouse = 1
+
+                     update_graph2()
+                     }, + 25900);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse: 1 Cat: 6 Action: escape Winner: Cat </p>' 
+document.getElementById('top_info').innerHTML = "Mouse's Parent Node making a winning move..."
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse: 1 Cat: 6 Action: escape Winner: Cat"
+                    position_of_cat = 6
+
+                     position_of_mouse = 1
+
+                     update_graph2()
+                     }, + 26600);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse: 3 Cat: 1 Action: catch Winner: Cat </p>' 
+document.getElementById('top_info').innerHTML = "Cat's Parent Node making a winning move..."
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse: 3 Cat: 1 Action: catch Winner: Cat"
+                    position_of_cat = 1
+
+                     position_of_mouse = 3
+
+                     update_graph2()
+                     }, + 27300);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse: 2 Cat: 1 Action: escape Winner: Cat </p>' 
+document.getElementById('top_info').innerHTML = "Mouse's Parent Node making a winning move..."
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse: 2 Cat: 1 Action: escape Winner: Cat"
+                    position_of_cat = 1
+
+                     position_of_mouse = 2
+
+                     update_graph2()
+                     }, + 28000);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse: 2 Cat: 4 Action: escape Winner: Cat </p>' 
+document.getElementById('top_info').innerHTML = "Mouse's Parent Node making a winning move..."
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse: 2 Cat: 4 Action: escape Winner: Cat"
+                    position_of_cat = 4
+
+                     position_of_mouse = 2
+
+                     update_graph2()
+                     }, + 28700);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse: 2 Cat: 7 Action: escape Winner: Cat </p>' 
+document.getElementById('top_info').innerHTML = "Mouse's Parent Node making a winning move..."
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse: 2 Cat: 7 Action: escape Winner: Cat"
+                    position_of_cat = 7
+
+                     position_of_mouse = 2
+
+                     update_graph2()
+                     }, + 29400);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse: 2 Cat: 8 Action: escape Winner: Cat </p>' 
+document.getElementById('top_info').innerHTML = "Mouse's Parent Node making a winning move..."
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse: 2 Cat: 8 Action: escape Winner: Cat"
+                    position_of_cat = 8
+
+                     position_of_mouse = 2
+
+                     update_graph2()
+                     }, + 30100);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse: 3 Cat: 2 Action: catch Winner: Cat </p>' 
+document.getElementById('top_info').innerHTML = "Cat's Parent Node making a winning move..."
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse: 3 Cat: 2 Action: catch Winner: Cat"
+                    position_of_cat = 2
+
+                     position_of_mouse = 3
+
+                     update_graph2()
+                     }, + 30800);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse: 3 Cat: 4 Action: escape Winner: Cat </p>' 
+document.getElementById('top_info').innerHTML = "Mouse's Parent Node making a winning move..."
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse: 3 Cat: 4 Action: escape Winner: Cat"
+                    position_of_cat = 4
+
+                     position_of_mouse = 3
+
+                     update_graph2()
+                     }, + 31500);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse: 3 Cat: 5 Action: escape Winner: Cat </p>' 
+document.getElementById('top_info').innerHTML = "Mouse's Parent Node making a winning move..."
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse: 3 Cat: 5 Action: escape Winner: Cat"
+                    position_of_cat = 5
+
+                     position_of_mouse = 3
+
+                     update_graph2()
+                     }, + 32200);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse: 3 Cat: 6 Action: escape Winner: Cat </p>' 
+document.getElementById('top_info').innerHTML = "Mouse's Parent Node making a winning move..."
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse: 3 Cat: 6 Action: escape Winner: Cat"
+                    position_of_cat = 6
+
+                     position_of_mouse = 3
+
+                     update_graph2()
+                     }, + 32900);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse: 4 Cat: 2 Action: escape Winner: Cat </p>' 
+document.getElementById('top_info').innerHTML = "Mouse's Parent Node making a winning move..."
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse: 4 Cat: 2 Action: escape Winner: Cat"
+                    position_of_cat = 2
+
+                     position_of_mouse = 4
+
+                     update_graph2()
+                     }, + 33600);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse: 4 Cat: 3 Action: escape Winner: Cat </p>' 
+document.getElementById('top_info').innerHTML = "Mouse's Parent Node making a winning move..."
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse: 4 Cat: 3 Action: escape Winner: Cat"
+                    position_of_cat = 3
+
+                     position_of_mouse = 4
+
+                     update_graph2()
+                     }, + 34300);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse: 4 Cat: 8 Action: escape Winner: Cat </p>' 
+document.getElementById('top_info').innerHTML = "Mouse's Parent Node making a winning move..."
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse: 4 Cat: 8 Action: escape Winner: Cat"
+                    position_of_cat = 8
+
+                     position_of_mouse = 4
+
+                     update_graph2()
+                     }, + 35000);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse: 3 Cat: 4 Action: catch Winner: Cat </p>' 
+document.getElementById('top_info').innerHTML = "Cat's Parent Node making a winning move..."
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse: 3 Cat: 4 Action: catch Winner: Cat"
+                    position_of_cat = 4
+
+                     position_of_mouse = 3
+
+                     update_graph2()
+                     }, + 35700);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse: 5 Cat: 1 Action: escape Winner: Cat </p>' 
+document.getElementById('top_info').innerHTML = "Mouse's Parent Node making a winning move..."
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse: 5 Cat: 1 Action: escape Winner: Cat"
+                    position_of_cat = 1
+
+                     position_of_mouse = 5
+
+                     update_graph2()
+                     }, + 36400);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse: 5 Cat: 3 Action: escape Winner: Cat </p>' 
+document.getElementById('top_info').innerHTML = "Mouse's Parent Node making a winning move..."
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse: 5 Cat: 3 Action: escape Winner: Cat"
+                    position_of_cat = 3
+
+                     position_of_mouse = 5
+
+                     update_graph2()
+                     }, + 37100);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse: 5 Cat: 6 Action: escape Winner: Cat </p>' 
+document.getElementById('top_info').innerHTML = "Mouse's Parent Node making a winning move..."
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse: 5 Cat: 6 Action: escape Winner: Cat"
+                    position_of_cat = 6
+
+                     position_of_mouse = 5
+
+                     update_graph2()
+                     }, + 37800);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse: 3 Cat: 5 Action: catch Winner: Cat </p>' 
+document.getElementById('top_info').innerHTML = "Cat's Parent Node making a winning move..."
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse: 3 Cat: 5 Action: catch Winner: Cat"
+                    position_of_cat = 5
+
+                     position_of_mouse = 3
+
+                     update_graph2()
+                     }, + 38500);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse: 6 Cat: 1 Action: escape Winner: Cat </p>' 
+document.getElementById('top_info').innerHTML = "Mouse's Parent Node making a winning move..."
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse: 6 Cat: 1 Action: escape Winner: Cat"
+                    position_of_cat = 1
+
+                     position_of_mouse = 6
+
+                     update_graph2()
+                     }, + 39200);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse: 6 Cat: 3 Action: escape Winner: Cat </p>' 
+document.getElementById('top_info').innerHTML = "Mouse's Parent Node making a winning move..."
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse: 6 Cat: 3 Action: escape Winner: Cat"
+                    position_of_cat = 3
+
+                     position_of_mouse = 6
+
+                     update_graph2()
+                     }, + 39900);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse: 6 Cat: 5 Action: escape Winner: Cat </p>' 
+document.getElementById('top_info').innerHTML = "Mouse's Parent Node making a winning move..."
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse: 6 Cat: 5 Action: escape Winner: Cat"
+                    position_of_cat = 5
+
+                     position_of_mouse = 6
+
+                     update_graph2()
+                     }, + 40600);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse: 6 Cat: 7 Action: escape Winner: Cat </p>' 
+document.getElementById('top_info').innerHTML = "Mouse's Parent Node making a winning move..."
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse: 6 Cat: 7 Action: escape Winner: Cat"
+                    position_of_cat = 7
+
+                     position_of_mouse = 6
+
+                     update_graph2()
+                     }, + 41300);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse: 6 Cat: 8 Action: escape Winner: Cat </p>' 
+document.getElementById('top_info').innerHTML = "Mouse's Parent Node making a winning move..."
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse: 6 Cat: 8 Action: escape Winner: Cat"
+                    position_of_cat = 8
+
+                     position_of_mouse = 6
+
+                     update_graph2()
+                     }, + 42000);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse: 3 Cat: 6 Action: catch Winner: Cat </p>' 
+document.getElementById('top_info').innerHTML = "Cat's Parent Node making a winning move..."
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse: 3 Cat: 6 Action: catch Winner: Cat"
+                    position_of_cat = 6
+
+                     position_of_mouse = 3
+
+                     update_graph2()
+                     }, + 42700);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse: 7 Cat: 2 Action: escape Winner: Cat </p>' 
+document.getElementById('top_info').innerHTML = "Mouse's Parent Node making a winning move..."
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse: 7 Cat: 2 Action: escape Winner: Cat"
+                    position_of_cat = 2
+
+                     position_of_mouse = 7
+
+                     update_graph2()
+                     }, + 43400);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse: 7 Cat: 6 Action: escape Winner: Cat </p>' 
+document.getElementById('top_info').innerHTML = "Mouse's Parent Node making a winning move..."
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse: 7 Cat: 6 Action: escape Winner: Cat"
+                    position_of_cat = 6
+
+                     position_of_mouse = 7
+
+                     update_graph2()
+                     }, + 44100);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse: 7 Cat: 8 Action: escape Winner: Cat </p>' 
+document.getElementById('top_info').innerHTML = "Mouse's Parent Node making a winning move..."
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse: 7 Cat: 8 Action: escape Winner: Cat"
+                    position_of_cat = 8
+
+                     position_of_mouse = 7
+
+                     update_graph2()
+                     }, + 44800);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse: 3 Cat: 7 Action: catch Winner: Cat </p>' 
+document.getElementById('top_info').innerHTML = "Cat's Parent Node making a winning move..."
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse: 3 Cat: 7 Action: catch Winner: Cat"
+                    position_of_cat = 7
+
+                     position_of_mouse = 3
+
+                     update_graph2()
+                     }, + 45500);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse: 8 Cat: 2 Action: escape Winner: Cat </p>' 
+document.getElementById('top_info').innerHTML = "Mouse's Parent Node making a winning move..."
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse: 8 Cat: 2 Action: escape Winner: Cat"
+                    position_of_cat = 2
+
+                     position_of_mouse = 8
+
+                     update_graph2()
+                     }, + 46200);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse: 8 Cat: 4 Action: escape Winner: Cat </p>' 
+document.getElementById('top_info').innerHTML = "Mouse's Parent Node making a winning move..."
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse: 8 Cat: 4 Action: escape Winner: Cat"
+                    position_of_cat = 4
+
+                     position_of_mouse = 8
+
+                     update_graph2()
+                     }, + 46900);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse: 8 Cat: 6 Action: escape Winner: Cat </p>' 
+document.getElementById('top_info').innerHTML = "Mouse's Parent Node making a winning move..."
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse: 8 Cat: 6 Action: escape Winner: Cat"
+                    position_of_cat = 6
+
+                     position_of_mouse = 8
+
+                     update_graph2()
+                     }, + 47600);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse: 8 Cat: 7 Action: escape Winner: Cat </p>' 
+document.getElementById('top_info').innerHTML = "Mouse's Parent Node making a winning move..."
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse: 8 Cat: 7 Action: escape Winner: Cat"
+                    position_of_cat = 7
+
+                     position_of_mouse = 8
+
+                     update_graph2()
+                     }, + 48300);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse: 3 Cat: 8 Action: catch Winner: Cat </p>' 
+document.getElementById('top_info').innerHTML = "Cat's Parent Node making a winning move..."
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse: 3 Cat: 8 Action: catch Winner: Cat"
+                    position_of_cat = 8
+
+                     position_of_mouse = 3
+
+                     update_graph2()
+                     }, + 49000);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse: 5 Cat: 6 Action: catch Winner: Cat </p>' 
+document.getElementById('top_info').innerHTML = "Cat's Parent Node can't make a winning move, hence enqueing all children colored as losing moves"
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse: 5 Cat: 6 Action: catch Winner: Cat"
+                    position_of_cat = 6
+
+                     position_of_mouse = 5
+
+                     update_graph2()
+                     }, + 49700);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse: 7 Cat: 8 Action: catch Winner: Cat </p>' 
+document.getElementById('top_info').innerHTML = "Cat's Parent Node can't make a winning move, hence enqueing all children colored as losing moves"
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse: 7 Cat: 8 Action: catch Winner: Cat"
+                    position_of_cat = 8
+
+                     position_of_mouse = 7
+
+                     update_graph2()
+                     }, + 50400);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse: 3 Cat: 1 Action: escape Winner: Cat </p>' 
+document.getElementById('top_info').innerHTML = "Mouse's Parent Node can't make a winning move, hence enqueing all children colored as losing moves"
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse: 3 Cat: 1 Action: escape Winner: Cat"
+                    position_of_cat = 1
+
+                     position_of_mouse = 3
+
+                     update_graph2()
+                     }, + 51100);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse: 3 Cat: 8 Action: escape Winner: Cat </p>' 
+document.getElementById('top_info').innerHTML = "Mouse's Parent Node can't make a winning move, hence enqueing all children colored as losing moves"
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse: 3 Cat: 8 Action: escape Winner: Cat"
+                    position_of_cat = 8
+
+                     position_of_mouse = 3
+
+                     update_graph2()
+                     }, + 51800);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse: 3 Cat: 2 Action: escape Winner: Cat </p>' 
+document.getElementById('top_info').innerHTML = "Mouse's Parent Node can't make a winning move, hence enqueing all children colored as losing moves"
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse: 3 Cat: 2 Action: escape Winner: Cat"
+                    position_of_cat = 2
+
+                     position_of_mouse = 3
+
+                     update_graph2()
+                     }, + 52500);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse: 3 Cat: 7 Action: escape Winner: Cat </p>' 
+document.getElementById('top_info').innerHTML = "Mouse's Parent Node can't make a winning move, hence enqueing all children colored as losing moves"
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse: 3 Cat: 7 Action: escape Winner: Cat"
+                    position_of_cat = 7
+
+                     position_of_mouse = 3
+
+                     update_graph2()
+                     }, + 53200);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse: 5 Cat: 7 Action: escape Winner: Cat </p>' 
+document.getElementById('top_info').innerHTML = "Mouse's Parent Node making a winning move..."
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse: 5 Cat: 7 Action: escape Winner: Cat"
+                    position_of_cat = 7
+
+                     position_of_mouse = 5
+
+                     update_graph2()
+                     }, + 53900);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse: 5 Cat: 8 Action: escape Winner: Cat </p>' 
+document.getElementById('top_info').innerHTML = "Mouse's Parent Node making a winning move..."
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse: 5 Cat: 8 Action: escape Winner: Cat"
+                    position_of_cat = 8
+
+                     position_of_mouse = 5
+
+                     update_graph2()
+                     }, + 54600);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse: 7 Cat: 4 Action: escape Winner: Cat </p>' 
+document.getElementById('top_info').innerHTML = "Mouse's Parent Node making a winning move..."
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse: 7 Cat: 4 Action: escape Winner: Cat"
+                    position_of_cat = 4
+
+                     position_of_mouse = 7
+
+                     update_graph2()
+                     }, + 55300);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse: 4 Cat: 1 Action: catch Winner: Cat </p>' 
+document.getElementById('top_info').innerHTML = "Cat's Parent Node making a winning move..."
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse: 4 Cat: 1 Action: catch Winner: Cat"
+                    position_of_cat = 1
+
+                     position_of_mouse = 4
+
+                     update_graph2()
+                     }, + 56000);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse: 5 Cat: 1 Action: catch Winner: Cat </p>' 
+document.getElementById('top_info').innerHTML = "Cat's Parent Node making a winning move..."
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse: 5 Cat: 1 Action: catch Winner: Cat"
+                    position_of_cat = 1
+
+                     position_of_mouse = 5
+
+                     update_graph2()
+                     }, + 56700);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse: 6 Cat: 1 Action: catch Winner: Cat </p>' 
+document.getElementById('top_info').innerHTML = "Cat's Parent Node making a winning move..."
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse: 6 Cat: 1 Action: catch Winner: Cat"
+                    position_of_cat = 1
+
+                     position_of_mouse = 6
+
+                     update_graph2()
+                     }, + 57400);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse: 4 Cat: 8 Action: catch Winner: Cat </p>' 
+document.getElementById('top_info').innerHTML = "Cat's Parent Node making a winning move..."
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse: 4 Cat: 8 Action: catch Winner: Cat"
+                    position_of_cat = 8
+
+                     position_of_mouse = 4
+
+                     update_graph2()
+                     }, + 58100);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse: 5 Cat: 8 Action: catch Winner: Cat </p>' 
+document.getElementById('top_info').innerHTML = "Cat's Parent Node making a winning move..."
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse: 5 Cat: 8 Action: catch Winner: Cat"
+                    position_of_cat = 8
+
+                     position_of_mouse = 5
+
+                     update_graph2()
+                     }, + 58800);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse: 6 Cat: 8 Action: catch Winner: Cat </p>' 
+document.getElementById('top_info').innerHTML = "Cat's Parent Node making a winning move..."
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse: 6 Cat: 8 Action: catch Winner: Cat"
+                    position_of_cat = 8
+
+                     position_of_mouse = 6
+
+                     update_graph2()
+                     }, + 59500);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse: 4 Cat: 2 Action: catch Winner: Cat </p>' 
+document.getElementById('top_info').innerHTML = "Cat's Parent Node making a winning move..."
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse: 4 Cat: 2 Action: catch Winner: Cat"
+                    position_of_cat = 2
+
+                     position_of_mouse = 4
+
+                     update_graph2()
+                     }, + 60200);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse: 5 Cat: 2 Action: catch Winner: Cat </p>' 
+document.getElementById('top_info').innerHTML = "Cat's Parent Node making a winning move..."
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse: 5 Cat: 2 Action: catch Winner: Cat"
+                    position_of_cat = 2
+
+                     position_of_mouse = 5
+
+                     update_graph2()
+                     }, + 60900);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse: 6 Cat: 2 Action: catch Winner: Cat </p>' 
+document.getElementById('top_info').innerHTML = "Cat's Parent Node making a winning move..."
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse: 6 Cat: 2 Action: catch Winner: Cat"
+                    position_of_cat = 2
+
+                     position_of_mouse = 6
+
+                     update_graph2()
+                     }, + 61600);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse: 4 Cat: 7 Action: catch Winner: Cat </p>' 
+document.getElementById('top_info').innerHTML = "Cat's Parent Node making a winning move..."
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse: 4 Cat: 7 Action: catch Winner: Cat"
+                    position_of_cat = 7
+
+                     position_of_mouse = 4
+
+                     update_graph2()
+                     }, + 62300);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse: 5 Cat: 7 Action: catch Winner: Cat </p>' 
+document.getElementById('top_info').innerHTML = "Cat's Parent Node making a winning move..."
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse: 5 Cat: 7 Action: catch Winner: Cat"
+                    position_of_cat = 7
+
+                     position_of_mouse = 5
+
+                     update_graph2()
+                     }, + 63000);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse: 6 Cat: 7 Action: catch Winner: Cat </p>' 
+document.getElementById('top_info').innerHTML = "Cat's Parent Node making a winning move..."
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse: 6 Cat: 7 Action: catch Winner: Cat"
+                    position_of_cat = 7
+
+                     position_of_mouse = 6
+
+                     update_graph2()
+                     }, + 63700);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse: 1 Cat: 7 Action: catch Winner: Cat </p>' 
+document.getElementById('top_info').innerHTML = "Cat's Parent Node can't make a winning move, hence enqueing all children colored as losing moves"
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse: 1 Cat: 7 Action: catch Winner: Cat"
+                    position_of_cat = 7
+
+                     position_of_mouse = 1
+
+                     update_graph2()
+                     }, + 64400);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse: 1 Cat: 8 Action: catch Winner: Cat </p>' 
+document.getElementById('top_info').innerHTML = "Cat's Parent Node can't make a winning move, hence enqueing all children colored as losing moves"
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse: 1 Cat: 8 Action: catch Winner: Cat"
+                    position_of_cat = 8
+
+                     position_of_mouse = 1
+
+                     update_graph2()
+                     }, + 65100);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse: 1 Cat: 8 Action: escape Winner: Cat </p>' 
+document.getElementById('top_info').innerHTML = "Mouse's Parent Node making a winning move..."
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse: 1 Cat: 8 Action: escape Winner: Cat"
+                    position_of_cat = 8
+
+                     position_of_mouse = 1
+
+                     update_graph2()
+                     }, + 65800);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse: 1 Cat: 4 Action: escape Winner: Cat </p>' 
+document.getElementById('top_info').innerHTML = "Mouse's Parent Node making a winning move..."
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse: 1 Cat: 4 Action: escape Winner: Cat"
+                    position_of_cat = 4
+
+                     position_of_mouse = 1
+
+                     update_graph2()
+                     }, + 66500);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse: 1 Cat: 7 Action: escape Winner: Cat </p>' 
+document.getElementById('top_info').innerHTML = "Mouse's Parent Node making a winning move..."
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse: 1 Cat: 7 Action: escape Winner: Cat"
+                    position_of_cat = 7
+
+                     position_of_mouse = 1
+
+                     update_graph2()
+                     }, + 67200);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse: 2 Cat: 8 Action: catch Winner: Cat </p>' 
+document.getElementById('top_info').innerHTML = "Cat's Parent Node can't make a winning move, hence enqueing all children colored as losing moves"
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse: 2 Cat: 8 Action: catch Winner: Cat"
+                    position_of_cat = 8
+
+                     position_of_mouse = 2
+
+                     update_graph2()
+                     }, + 67900);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse: 2 Cat: 4 Action: catch Winner: Cat </p>' 
+document.getElementById('top_info').innerHTML = "Cat's Parent Node can't make a winning move, hence enqueing all children colored as losing moves"
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse: 2 Cat: 4 Action: catch Winner: Cat"
+                    position_of_cat = 4
+
+                     position_of_mouse = 2
+
+                     update_graph2()
+                     }, + 68600);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse: 2 Cat: 6 Action: escape Winner: Cat </p>' 
+document.getElementById('top_info').innerHTML = "Mouse's Parent Node making a winning move..."
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse: 2 Cat: 6 Action: escape Winner: Cat"
+                    position_of_cat = 6
+
+                     position_of_mouse = 2
+
+                     update_graph2()
+                     }, + 69300);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse: 2 Cat: 3 Action: escape Winner: Cat </p>' 
+document.getElementById('top_info').innerHTML = "Mouse's Parent Node making a winning move..."
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse: 2 Cat: 3 Action: escape Winner: Cat"
+                    position_of_cat = 3
+
+                     position_of_mouse = 2
+
+                     update_graph2()
+                     }, + 70000);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse: 1 Cat: 6 Action: catch Winner: Cat </p>' 
+document.getElementById('top_info').innerHTML = "Cat's Parent Node can't make a winning move, hence enqueing all children colored as losing moves"
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse: 1 Cat: 6 Action: catch Winner: Cat"
+                    position_of_cat = 6
+
+                     position_of_mouse = 1
+
+                     update_graph2()
+                     }, + 70700);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse: 4 Cat: 6 Action: catch Winner: Cat </p>' 
+document.getElementById('top_info').innerHTML = "Cat's Parent Node can't make a winning move, hence enqueing all children colored as losing moves"
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse: 4 Cat: 6 Action: catch Winner: Cat"
+                    position_of_cat = 6
+
+                     position_of_mouse = 4
+
+                     update_graph2()
+                     }, + 71400);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse: 7 Cat: 6 Action: catch Winner: Cat </p>' 
+document.getElementById('top_info').innerHTML = "Cat's Parent Node can't make a winning move, hence enqueing all children colored as losing moves"
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse: 7 Cat: 6 Action: catch Winner: Cat"
+                    position_of_cat = 6
+
+                     position_of_mouse = 7
+
+                     update_graph2()
+                     }, + 72100);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse: 1 Cat: 3 Action: catch Winner: Cat </p>' 
+document.getElementById('top_info').innerHTML = "Cat's Parent Node can't make a winning move, hence enqueing all children colored as losing moves"
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse: 1 Cat: 3 Action: catch Winner: Cat"
+                    position_of_cat = 3
+
+                     position_of_mouse = 1
+
+                     update_graph2()
+                     }, + 72800);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse: 1 Cat: 3 Action: escape Winner: Cat </p>' 
+document.getElementById('top_info').innerHTML = "Mouse's Parent Node making a winning move..."
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse: 1 Cat: 3 Action: escape Winner: Cat"
+                    position_of_cat = 3
+
+                     position_of_mouse = 1
+
+                     update_graph2()
+                     }, + 73500);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse: 4 Cat: 1 Action: escape Winner: Cat </p>' 
+document.getElementById('top_info').innerHTML = "Mouse's Parent Node making a winning move..."
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse: 4 Cat: 1 Action: escape Winner: Cat"
+                    position_of_cat = 1
+
+                     position_of_mouse = 4
+
+                     update_graph2()
+                     }, + 74200);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse: 4 Cat: 5 Action: escape Winner: Cat </p>' 
+document.getElementById('top_info').innerHTML = "Mouse's Parent Node making a winning move..."
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse: 4 Cat: 5 Action: escape Winner: Cat"
+                    position_of_cat = 5
+
+                     position_of_mouse = 4
+
+                     update_graph2()
+                     }, + 74900);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse: 4 Cat: 7 Action: escape Winner: Cat </p>' 
+document.getElementById('top_info').innerHTML = "Mouse's Parent Node making a winning move..."
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse: 4 Cat: 7 Action: escape Winner: Cat"
+                    position_of_cat = 7
+
+                     position_of_mouse = 4
+
+                     update_graph2()
+                     }, + 75600);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse: 7 Cat: 1 Action: escape Winner: Cat </p>' 
+document.getElementById('top_info').innerHTML = "Mouse's Parent Node making a winning move..."
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse: 7 Cat: 1 Action: escape Winner: Cat"
+                    position_of_cat = 1
+
+                     position_of_mouse = 7
+
+                     update_graph2()
+                     }, + 76300);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse: 7 Cat: 3 Action: escape Winner: Cat </p>' 
+document.getElementById('top_info').innerHTML = "Mouse's Parent Node making a winning move..."
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse: 7 Cat: 3 Action: escape Winner: Cat"
+                    position_of_cat = 3
+
+                     position_of_mouse = 7
+
+                     update_graph2()
+                     }, + 77000);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse: 7 Cat: 5 Action: escape Winner: Cat </p>' 
+document.getElementById('top_info').innerHTML = "Mouse's Parent Node making a winning move..."
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse: 7 Cat: 5 Action: escape Winner: Cat"
+                    position_of_cat = 5
+
+                     position_of_mouse = 7
+
+                     update_graph2()
+                     }, + 77700);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse: 5 Cat: 3 Action: catch Winner: Cat </p>' 
+document.getElementById('top_info').innerHTML = "Cat's Parent Node can't make a winning move, hence enqueing all children colored as losing moves"
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse: 5 Cat: 3 Action: catch Winner: Cat"
+                    position_of_cat = 3
+
+                     position_of_mouse = 5
+
+                     update_graph2()
+                     }, + 78400);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse: 2 Cat: 7 Action: catch Winner: Cat </p>' 
+document.getElementById('top_info').innerHTML = "Cat's Parent Node can't make a winning move, hence enqueing all children colored as losing moves"
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse: 2 Cat: 7 Action: catch Winner: Cat"
+                    position_of_cat = 7
+
+                     position_of_mouse = 2
+
+                     update_graph2()
+                     }, + 79100);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse: 8 Cat: 7 Action: catch Winner: Cat </p>' 
+document.getElementById('top_info').innerHTML = "Cat's Parent Node can't make a winning move, hence enqueing all children colored as losing moves"
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse: 8 Cat: 7 Action: catch Winner: Cat"
+                    position_of_cat = 7
+
+                     position_of_mouse = 8
+
+                     update_graph2()
+                     }, + 79800);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse: 8 Cat: 1 Action: catch Winner: Cat </p>' 
+document.getElementById('top_info').innerHTML = "Cat's Parent Node can't make a winning move, hence enqueing all children colored as losing moves"
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse: 8 Cat: 1 Action: catch Winner: Cat"
+                    position_of_cat = 1
+
+                     position_of_mouse = 8
+
+                     update_graph2()
+                     }, + 80500);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse: 8 Cat: 3 Action: catch Winner: Cat </p>' 
+document.getElementById('top_info').innerHTML = "Cat's Parent Node can't make a winning move, hence enqueing all children colored as losing moves"
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse: 8 Cat: 3 Action: catch Winner: Cat"
+                    position_of_cat = 3
+
+                     position_of_mouse = 8
+
+                     update_graph2()
+                     }, + 81200);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse: 5 Cat: 4 Action: escape Winner: Cat </p>' 
+document.getElementById('top_info').innerHTML = "Mouse's Parent Node making a winning move..."
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse: 5 Cat: 4 Action: escape Winner: Cat"
+                    position_of_cat = 4
+
+                     position_of_mouse = 5
+
+                     update_graph2()
+                     }, + 81900);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse: 8 Cat: 5 Action: escape Winner: Cat </p>' 
+document.getElementById('top_info').innerHTML = "Mouse's Parent Node making a winning move..."
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse: 8 Cat: 5 Action: escape Winner: Cat"
+                    position_of_cat = 5
+
+                     position_of_mouse = 8
+
+                     update_graph2()
+                     }, + 82600);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse: 6 Cat: 4 Action: catch Winner: Cat </p>' 
+document.getElementById('top_info').innerHTML = "Cat's Parent Node can't make a winning move, hence enqueing all children colored as losing moves"
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse: 6 Cat: 4 Action: catch Winner: Cat"
+                    position_of_cat = 4
+
+                     position_of_mouse = 6
+
+                     update_graph2()
+                     }, + 83300);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse: 2 Cat: 5 Action: catch Winner: Cat </p>' 
+document.getElementById('top_info').innerHTML = "Cat's Parent Node can't make a winning move, hence enqueing all children colored as losing moves"
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse: 2 Cat: 5 Action: catch Winner: Cat"
+                    position_of_cat = 5
+
+                     position_of_mouse = 2
+
+                     update_graph2()
+                     }, + 84000);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse: 6 Cat: 5 Action: catch Winner: Cat </p>' 
+document.getElementById('top_info').innerHTML = "Cat's Parent Node can't make a winning move, hence enqueing all children colored as losing moves"
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse: 6 Cat: 5 Action: catch Winner: Cat"
+                    position_of_cat = 5
+
+                     position_of_mouse = 6
+
+                     update_graph2()
+                     }, + 84700);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse: 6 Cat: 2 Action: escape Winner: Cat </p>' 
+document.getElementById('top_info').innerHTML = "Mouse's Parent Node making a winning move..."
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse: 6 Cat: 2 Action: escape Winner: Cat"
+                    position_of_cat = 2
+
+                     position_of_mouse = 6
+
+                     update_graph2()
+                     }, + 85400);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse: 7 Cat: 2 Action: catch Winner: Cat </p>' 
+document.getElementById('top_info').innerHTML = "Cat's Parent Node can't make a winning move, hence enqueing all children colored as losing moves"
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse: 7 Cat: 2 Action: catch Winner: Cat"
+                    position_of_cat = 2
+
+                     position_of_mouse = 7
+
+                     update_graph2()
+                     }, + 86100);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse: 8 Cat: 2 Action: catch Winner: Cat </p>' 
+document.getElementById('top_info').innerHTML = "Cat's Parent Node can't make a winning move, hence enqueing all children colored as losing moves"
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse: 8 Cat: 2 Action: catch Winner: Cat"
+                    position_of_cat = 2
+
+                     position_of_mouse = 8
+
+                     update_graph2()
+                     }, + 86800);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse: 8 Cat: 1 Action: escape Winner: Cat </p>' 
+document.getElementById('top_info').innerHTML = "Mouse's Parent Node making a winning move..."
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse: 8 Cat: 1 Action: escape Winner: Cat"
+                    position_of_cat = 1
+
+                     position_of_mouse = 8
+
+                     update_graph2()
+                     }, + 87500);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse: 2 Cat: 1 Action: catch Winner: Cat </p>' 
+document.getElementById('top_info').innerHTML = "Cat's Parent Node can't make a winning move, hence enqueing all children colored as losing moves"
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse: 2 Cat: 1 Action: catch Winner: Cat"
+                    position_of_cat = 1
+
+                     position_of_mouse = 2
+
+                     update_graph2()
+                     }, + 88200);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse: 7 Cat: 1 Action: catch Winner: Cat </p>' 
+document.getElementById('top_info').innerHTML = "Cat's Parent Node can't make a winning move, hence enqueing all children colored as losing moves"
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse: 7 Cat: 1 Action: catch Winner: Cat"
+                    position_of_cat = 1
+
+                     position_of_mouse = 7
+
+                     update_graph2()
+                     }, + 88900);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse: 2 Cat: 5 Action: escape Winner: Cat </p>' 
+document.getElementById('top_info').innerHTML = "Mouse's Parent Node making a winning move..."
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse: 2 Cat: 5 Action: escape Winner: Cat"
+                    position_of_cat = 5
+
+                     position_of_mouse = 2
+
+                     update_graph2()
+                     }, + 89600);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse: 1 Cat: 5 Action: catch Winner: Cat </p>' 
+document.getElementById('top_info').innerHTML = "Cat's Parent Node can't make a winning move, hence enqueing all children colored as losing moves"
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse: 1 Cat: 5 Action: catch Winner: Cat"
+                    position_of_cat = 5
+
+                     position_of_mouse = 1
+
+                     update_graph2()
+                     }, + 90300);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse: 4 Cat: 5 Action: catch Winner: Cat </p>' 
+document.getElementById('top_info').innerHTML = "Cat's Parent Node can't make a winning move, hence enqueing all children colored as losing moves"
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse: 4 Cat: 5 Action: catch Winner: Cat"
+                    position_of_cat = 5
+
+                     position_of_mouse = 4
+
+                     update_graph2()
+                     }, + 91000);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse: 7 Cat: 5 Action: catch Winner: Cat </p>' 
+document.getElementById('top_info').innerHTML = "Cat's Parent Node can't make a winning move, hence enqueing all children colored as losing moves"
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse: 7 Cat: 5 Action: catch Winner: Cat"
+                    position_of_cat = 5
+
+                     position_of_mouse = 7
+
+                     update_graph2()
+                     }, + 91700);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse: 8 Cat: 5 Action: catch Winner: Cat </p>' 
+document.getElementById('top_info').innerHTML = "Cat's Parent Node can't make a winning move, hence enqueing all children colored as losing moves"
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse: 8 Cat: 5 Action: catch Winner: Cat"
+                    position_of_cat = 5
+
+                     position_of_mouse = 8
+
+                     update_graph2()
+                     }, + 92400);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse: 4 Cat: 6 Action: escape Winner: Cat </p>' 
+document.getElementById('top_info').innerHTML = "Mouse's Parent Node making a winning move..."
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse: 4 Cat: 6 Action: escape Winner: Cat"
+                    position_of_cat = 6
+
+                     position_of_mouse = 4
+
+                     update_graph2()
+                     }, + 93100);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse: 8 Cat: 3 Action: escape Winner: Cat </p>' 
+document.getElementById('top_info').innerHTML = "Mouse's Parent Node making a winning move..."
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse: 8 Cat: 3 Action: escape Winner: Cat"
+                    position_of_cat = 3
+
+                     position_of_mouse = 8
+
+                     update_graph2()
+                     }, + 93800);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse: 2 Cat: 6 Action: catch Winner: Cat </p>' 
+document.getElementById('top_info').innerHTML = "Cat's Parent Node can't make a winning move, hence enqueing all children colored as losing moves"
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse: 2 Cat: 6 Action: catch Winner: Cat"
+                    position_of_cat = 6
+
+                     position_of_mouse = 2
+
+                     update_graph2()
+                     }, + 94500);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse: 8 Cat: 6 Action: catch Winner: Cat </p>' 
+document.getElementById('top_info').innerHTML = "Cat's Parent Node can't make a winning move, hence enqueing all children colored as losing moves"
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse: 8 Cat: 6 Action: catch Winner: Cat"
+                    position_of_cat = 6
+
+                     position_of_mouse = 8
+
+                     update_graph2()
+                     }, + 95200);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse: 2 Cat: 3 Action: catch Winner: Cat </p>' 
+document.getElementById('top_info').innerHTML = "Cat's Parent Node can't make a winning move, hence enqueing all children colored as losing moves"
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse: 2 Cat: 3 Action: catch Winner: Cat"
+                    position_of_cat = 3
+
+                     position_of_mouse = 2
+
+                     update_graph2()
+                     }, + 95900);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse: 4 Cat: 3 Action: catch Winner: Cat </p>' 
+document.getElementById('top_info').innerHTML = "Cat's Parent Node can't make a winning move, hence enqueing all children colored as losing moves"
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse: 4 Cat: 3 Action: catch Winner: Cat"
+                    position_of_cat = 3
+
+                     position_of_mouse = 4
+
+                     update_graph2()
+                     }, + 96600);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse: 6 Cat: 3 Action: catch Winner: Cat </p>' 
+document.getElementById('top_info').innerHTML = "Cat's Parent Node can't make a winning move, hence enqueing all children colored as losing moves"
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse: 6 Cat: 3 Action: catch Winner: Cat"
+                    position_of_cat = 3
+
+                     position_of_mouse = 6
+
+                     update_graph2()
+                     }, + 97300);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse: 7 Cat: 3 Action: catch Winner: Cat </p>' 
+document.getElementById('top_info').innerHTML = "Cat's Parent Node can't make a winning move, hence enqueing all children colored as losing moves"
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse: 7 Cat: 3 Action: catch Winner: Cat"
+                    position_of_cat = 3
+
+                     position_of_mouse = 7
+
+                     update_graph2()
+                     }, + 98000);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse: 6 Cat: 4 Action: escape Winner: Cat </p>' 
+document.getElementById('top_info').innerHTML = "Mouse's Parent Node making a winning move..."
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse: 6 Cat: 4 Action: escape Winner: Cat"
+                    position_of_cat = 4
+
+                     position_of_mouse = 6
+
+                     update_graph2()
+                     }, + 98700);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse: 1 Cat: 4 Action: catch Winner: Cat </p>' 
+document.getElementById('top_info').innerHTML = "Cat's Parent Node can't make a winning move, hence enqueing all children colored as losing moves"
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse: 1 Cat: 4 Action: catch Winner: Cat"
+                    position_of_cat = 4
+
+                     position_of_mouse = 1
+
+                     update_graph2()
+                     }, + 99400);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse: 5 Cat: 4 Action: catch Winner: Cat </p>' 
+document.getElementById('top_info').innerHTML = "Cat's Parent Node can't make a winning move, hence enqueing all children colored as losing moves"
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse: 5 Cat: 4 Action: catch Winner: Cat"
+                    position_of_cat = 4
+
+                     position_of_mouse = 5
+
+                     update_graph2()
+                     }, + 100100);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse: 7 Cat: 4 Action: catch Winner: Cat </p>' 
+document.getElementById('top_info').innerHTML = "Cat's Parent Node can't make a winning move, hence enqueing all children colored as losing moves"
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse: 7 Cat: 4 Action: catch Winner: Cat"
+                    position_of_cat = 4
+
+                     position_of_mouse = 7
+
+                     update_graph2()
+                     }, + 100800);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse: 8 Cat: 4 Action: catch Winner: Cat </p>' 
+document.getElementById('top_info').innerHTML = "Cat's Parent Node can't make a winning move, hence enqueing all children colored as losing moves"
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse: 8 Cat: 4 Action: catch Winner: Cat"
+                    position_of_cat = 4
+
+                     position_of_mouse = 8
+
+                     update_graph2()
+                     }, + 101500);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse: 5 Cat: 2 Action: escape Winner: Cat </p>' 
+document.getElementById('top_info').innerHTML = "Mouse's Parent Node making a winning move..."
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse: 5 Cat: 2 Action: escape Winner: Cat"
+                    position_of_cat = 2
+
+                     position_of_mouse = 5
+
+                     update_graph2()
+                     }, + 102200);   
+                     
+            
+
+         document.getElementById("full_stack").innerHTML += '<p style="font-family: gamef;color: #fff;font-size:0.75rem;margin-top: 2rem;margin-left: 0.2rem;margin-right:1rem;padding-top: 0.2rem;padding-bottom: 0.2rem;background:#000;border-left: #DEBCDE solid 6px;font-weight: bold;">Mouse: 1 Cat: 2 Action: catch Winner: Cat </p>' 
+document.getElementById('top_info').innerHTML = "Cat's Parent Node can't make a winning move, hence enqueing all children colored as losing moves"
+            setTimeout(() => {   
+                         document.getElementById("curr_state").innerText = "Mouse: 1 Cat: 2 Action: catch Winner: Cat"
+                    position_of_cat = 2
+
+                     position_of_mouse = 1
+
+                     update_graph2()
+                     }, + 102900);   
+                     
+            
+
+        
+            setTimeout(() => {
+                document.getElementById("full_stack").innerHTML = "" 
+                document.getElementById("full_stack").style.visibility = "hidden"    
+                document.getElementById("curr_state").innerText = "Visualization Complete and Mouse Escapes Finally"
+                    position_of_cat = 2
+
+                     position_of_mouse = 1
+
+                     update_graph2()
+                     }, + 103600);   
+            
+
+         
+        </script>
+    
+    <script>
+        var graph_data  = {"nodes":[], "edges":[]}
+        graph_data["nodes"].push({"id":"0", "height":48, "fill": {"src":"https://kowndinya2000.github.io/cs512.github.io/goal.png"}});
+        graph_data["nodes"].push({"id":"1", "height":48, "fill": {"src":"https://kowndinya2000.github.io/cs512.github.io/jerry.png"}});
+        graph_data["nodes"].push({"id":"2", "height":48, "fill": {"src":"https://kowndinya2000.github.io/cs512.github.io/tom.png"}});
+        
+        for(let i=3; i<graph_config.length; i++){
+            graph_data["nodes"].push({"id":i.toString(), "height":48, "fill": {"src":"https://kowndinya2000.github.io/cs512.github.io/node_g.png"}});
+        }
+        for(let i=0; i<graph_config.length; i++){
+            for(let j=0;j<graph_config[i].length;j++){
+                graph_data["edges"].push({"from":i.toString(), "to":graph_config[i][j].toString()});
+            }
+        }
+        anychart.onDocumentReady(function () {
+        var chart = anychart.graph(graph_data);
+            var nodes = chart.nodes();
+
+            nodes.normal().height(48);
+            nodes.hovered().height(56);
+            nodes.selected().height(56);
+
+            nodes.normal().stroke(null);
+            nodes.hovered().stroke("#3D43BF", 3);
+            nodes.selected().stroke("#FEFDF9", 3);
+        chart.container("container").draw();
+        });
+        
+    </script>
+    </body>
+
+    </html>
+    
